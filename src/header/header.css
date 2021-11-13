@@ -1,0 +1,19 @@
+.header {
+  width: 100%;
+  height: 100px;
+  background-color: black;
+}
+
+.header-content {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+.header-logo {
+  color: white;
+  font-size: 28px;
+  pointer-events: none;
+}
