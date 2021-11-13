@@ -5,12 +5,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
 
-.div-not-selectable { 
+
+.not-selectable { 
   -webkit-user-select: none;
   -khtml-user-select: none;
   -webkit-touch-callout: none;
