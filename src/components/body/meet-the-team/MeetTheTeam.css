@@ -18,11 +18,13 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  flex-flow: wrap;
 }
 
 .meet-team-member {
   width: 150px;
   margin-right: 100px;
+  margin-bottom: 10px;
   text-align: center;
 }
 .meet-team-member-image {
@@ -36,5 +38,5 @@
 }
 .meet-team-member-title {
   font-size: 16px;
-  height: 20px;
+  height: 40px;
 }
