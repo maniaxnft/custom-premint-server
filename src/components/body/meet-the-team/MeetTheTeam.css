@@ -1,0 +1,40 @@
+.meet {
+}
+
+.meet-content {
+  display: flex;
+  margin-left: 15px;
+  flex-direction: column;
+  max-width: 1200px;
+}
+
+.meet-title {
+  font-size: 44px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.meet-team {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.meet-team-member {
+  width: 150px;
+  margin-right: 100px;
+  text-align: center;
+}
+.meet-team-member-image {
+  width: 150px;
+  margin-bottom: 10px;
+}
+.meet-team-member-name {
+  color: #5338cd;
+  font-size: 25px;
+  font-weight: 600;
+}
+.meet-team-member-title {
+  font-size: 16px;
+  height: 20px;
+}
