@@ -1,0 +1,23 @@
+.jumbotron {
+    display: flex;
+    flex-direction: column;
+}
+.jumbotron-content {
+    display: flex;
+    flex-direction: column;
+    width: 550px;
+    margin: 100px 0 0 20px;
+}
+.jumbotron-title {
+    font-size: 50px;
+    font-weight: 700;
+}
+
+.jumbotron-title-sol {
+    color: #5338CD;
+}
+
+.jumbotron-explanation {
+    padding: 40px 0;
+    font-size: 18px;
+}
