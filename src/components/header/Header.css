@@ -20,18 +20,17 @@
   pointer-events: none;
 }
 
-.header-connect-wallet-button {
-  width: 150px;
-  height: 45px;
-  border-radius: 10px;
+.header-wallets {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #5338CD;
-  font-size: 16px;
-  color: white;
 }
-.header-connect-wallet-button:hover {
-  cursor: pointer;
-  opacity: 0.8;
+
+.header-wallets-connect-wallet {
+  font-family: 'Neucha', cursive !important;
+  margin-right: 10px;
+  background-color: #5338CD !important;
 }
+.header-wallets-disconnect-wallet  {
+  font-family: 'Neucha', cursive !important;
+}
+
+
