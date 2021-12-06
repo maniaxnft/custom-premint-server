@@ -1,1 +1,1 @@
-# Solmaniacs Mint Website
+# Solana Mint Website
