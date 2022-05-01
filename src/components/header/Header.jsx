@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  WalletDisconnectButton,
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 
@@ -18,10 +17,9 @@ const Header = ({
   return (
     <nav className="header">
       <div className="header-content">
-        <div className="header-logo unselectable"> SOLANA NFT </div>
+        <div className="header-logo unselectable"> {process.env.REACT_APP_PROJECT_NAME} </div>
         <div className="header-wallets">
           <WalletMultiButton className="header-wallets-connect-wallet" />
-          <WalletDisconnectButton className="header-wallets-disconnect-wallet" />
         </div>
       </div>
     </nav>

@@ -1,8 +1,9 @@
 {
-  "name": "sol-maniacs-mint-website",
+  "name": "verify-wallet-discord-twitter",
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev": "react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
