@@ -1,39 +1,19 @@
 {
   "name": "verify-wallet-discord-twitter",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "react-scripts start",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "dependencies": {
-    "axios": "^0.24.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-google-recaptcha-v3": "^1.9.7",
-    "react-scripts": "4.0.3",
-    "yarn": "^1.22.17"
-  },
-  "devDependencies": {},
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "body-parser": "^1.20.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.0.0",
+    "express": "~4.16.1",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "nodemon": "^2.0.16"
   }
 }

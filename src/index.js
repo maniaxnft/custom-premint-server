@@ -1,14 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+const express = require("express");
+const router = express.Router();
 
-import './index.css';
-import App from './components';
+/* GET home page. */
+router.get("/", function (req, res, next) {
+  res.render("index", { title: "Express" });
+});
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
-
+module.exports = router;

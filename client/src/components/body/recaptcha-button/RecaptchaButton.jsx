@@ -1,12 +1,12 @@
-import axios from "axios";
 import { useCallback, useState } from "react";
+import axios from "axios";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import toast from "react-hot-toast";
 
 export const RecaptchaButton = ({
   onClick,
-  actionName = "mint",
-  children = "Click to mint",
+  actionName = "verify",
+  children = "Click to verify",
   disabled,
 }: any) => {
   const [validating, setValidating] = useState(false);
@@ -26,7 +26,8 @@ export const RecaptchaButton = ({
       await onClick();
     } else toast.error("You fucking bot! GTFO");
     setValidating(false);
-  }, [executeRecaptcha]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [executeRecaptcha, actionName]);
 
   return (
     <button
