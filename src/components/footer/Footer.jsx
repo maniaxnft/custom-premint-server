@@ -10,18 +10,39 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-social">
-          <div className="footer-social-link unselectable">
+          <a
+            className="footer-social-link"
+            href={process.env.REACT_APP_TWITTER_URL}
+          >
             TWITTER
-            <img src={Twitter} alt="twitter" className="footer-social-link-img"/>
-          </div>
-          <div className="footer-social-link unselectable">
+            <img
+              src={Twitter}
+              alt="twitter"
+              className="footer-social-link-img"
+            />
+          </a>
+          <a
+            className="footer-social-link"
+            href={process.env.REACT_APP_TELEGRAM_URL}
+          >
             TELEGRAM
-            <img src={Telegram} alt="telegram" className="footer-social-link-img"/>
-          </div>
-          <div className="footer-social-link unselectable">
+            <img
+              src={Telegram}
+              alt="telegram"
+              className="footer-social-link-img"
+            />
+          </a>
+          <a
+            className="footer-social-link"
+            href={process.env.REACT_APP_DISCORD_URL}
+          >
             DISCORD
-            <img src={Discord} alt="discord" className="footer-social-link-img"/>
-          </div>
+            <img
+              src={Discord}
+              alt="discord"
+              className="footer-social-link-img"
+            />
+          </a>
         </div>
       </div>
     </footer>

@@ -24,6 +24,7 @@
   color: white;
   margin-right: 25px;
   font-weight: 600;
+  text-decoration: none;
 }
 .footer-social-link:hover {
   cursor: pointer;
