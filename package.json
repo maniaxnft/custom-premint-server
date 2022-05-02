@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "cd client && yarn && yarn build && rm -rf node_nodules && cd .. && node index.js"
   },
   "dependencies": {
     "body-parser": "^1.20.0",
@@ -14,6 +14,7 @@
     "express": "~4.16.1",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "siwe": "^1.1.6"
   }
 }
