@@ -1,17 +1,11 @@
-import {  useState } from "react";
+import { useState } from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers } from "ethers";
-import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
-import { ACTIONS } from "../../state/actions";
-import {
-  getNonce,
-  logout,
-  validateSignature,
-} from "../../services";
+import toast from "react-hot-toast";
 
- const useMetamaskLogin = () => {
-  const dispatch = useDispatch();
+import { getNonce, logout, validateSignature } from "../../../services";
+
+const useMetamaskLogin = () => {
   const [isConnecting, setIsConnecting] = useState(false);
 
   const checkIfMetamaskPresent = async () => {
@@ -55,12 +49,6 @@ import {
         signature,
       });
       setIsConnecting(false);
-      dispatch({
-        type: ACTIONS.SET_EVM_ADDRESS,
-        payload: {
-          data: signerAddress,
-        },
-      });
     } catch (error) {
       if (error?.code !== 4001) {
         toast.error(error.message);
@@ -71,12 +59,6 @@ import {
 
   const disconnectMetamask = () => {
     logout();
-    dispatch({
-      type: ACTIONS.SET_EVM_ADDRESS,
-      payload: {
-        data: "",
-      },
-    });
   };
 
   return {
@@ -86,4 +68,4 @@ import {
   };
 };
 
-export default useMetamaskLogin
+export default useMetamaskLogin;
