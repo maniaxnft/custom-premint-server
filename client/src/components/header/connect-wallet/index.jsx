@@ -1,5 +1,5 @@
 import React from "react";
-import './index.css'
+import "./index.css";
 
 import useMetamaskLogin from "./useMetamaskLogin";
 import MetamaskLogo from "../../../assets/metamask.png";
@@ -16,7 +16,10 @@ const ConnectWallet = () => {
   };
 
   return (
-    <div className={`metamask-button ${isConnecting ? "disabledbutton" : ""}`}>
+    <div
+      className={`metamask-button ${isConnecting ? "disabledbutton" : ""}`}
+      onClick={signAndVerifyMessage}
+    >
       <img className="metamask-button-img" src={MetamaskLogo} alt="metamask" />
       {evmAddress ? <span className="connectedDot"></span> : <></>}
       <div className="metamask-button-text">

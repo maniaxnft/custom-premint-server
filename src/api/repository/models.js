@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
+  walletAddress: {
+    type: String,
+    unique: true,
+  },
   nonce: {
     type: String,
-    required: true,
     unique: true,
   },
   discord: {
@@ -15,3 +18,6 @@ const userSchema = mongoose.Schema({
     unique: true,
   },
 });
+
+const userModel = mongoose.model("user", userSchema);
+module.exports = userModel;

@@ -5,24 +5,34 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
+const mongoose = require("mongoose");
 
 const api = require("./api");
 
-const app = express();
+const boot = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URL);
+  } catch (e) {
+    console.log(e);
+    process.exit(1);
+  }
 
-app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "client/build")));
+  const app = express();
 
-app.use("/api", api);
+  app.use(logger(process.env.NODE_ENV));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: false }));
+  app.use(cookieParser());
+  app.use(bodyParser.json());
+  app.use(express.static(path.join(__dirname, "client/build")));
 
-// start
-const port = process.env.PORT;
-app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
-});
+  app.use("/api", api);
 
-module.exports = app;
+  // start
+  const port = process.env.PORT;
+  app.listen(port, () => {
+    console.log(`App listening at http://localhost:${port}`);
+  });
+};
+
+boot();

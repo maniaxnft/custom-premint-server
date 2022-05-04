@@ -1,5 +1,7 @@
 import { useState } from "react";
+
 import { ethers } from "ethers";
+import { SiweMessage } from "siwe";
 import toast from "react-hot-toast";
 
 import { getNonce, logout, validateSignature } from "../../../services";
@@ -15,11 +17,20 @@ const useMetamaskLogin = () => {
       // Connect Metamask
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const evmWalletAddresses = await provider.send("eth_requestAccounts", []);
+      const walletAddress = evmWalletAddresses[0]
 
       // Sign Message
       const signer = provider.getSigner();
-      const nonce = await getNonce({ evmAddress: evmWalletAddresses[0] });
-      const signature = await signer.signMessage(nonce);
+      const nonce = await getNonce({ walletAddress });
+      const messageToSign = new SiweMessage({
+        domain: window.location.host,
+        address: walletAddress,
+        statement: 'Sign in with Metamask to the app.',
+        uri: window.location.origin,
+        version: 1,
+        nonce
+      })
+      const signature = await signer.signMessage(messageToSign);
       const evmAddress = await signer.getAddress();
 
       // Verify  Message
@@ -34,6 +45,7 @@ const useMetamaskLogin = () => {
         signature,
       });
       setIsConnecting(false);
+      setEvmAddress(walletAddress)
     } catch (error) {
       if (error?.code !== 4001) {
         toast.error(error.message);
@@ -42,14 +54,14 @@ const useMetamaskLogin = () => {
     }
   };
 
-  const disconnectMetamask = () => {
+  const disconnect = () => {
     logout();
   };
 
   return {
     isConnecting,
     signAndVerifyMessage,
-    disconnectMetamask,
+    disconnect,
     evmAddress
   };
 };

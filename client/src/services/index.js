@@ -8,7 +8,7 @@ export const mainInstance = axios.create({
 
 export const isAuthenticated = async () => {
   try {
-    const res = await mainInstance.get("/auth/isAuthenticated", {
+    const res = await mainInstance.get("/isAuthenticated", {
       withCredentials: true,
     });
     return res?.data?.keyIdentifier;
@@ -19,7 +19,7 @@ export const isAuthenticated = async () => {
 
 export const logout = async () => {
   try {
-    await mainInstance.get("/auth/logout", {
+    await mainInstance.get("/logout", {
       withCredentials: true,
     });
     return true;
@@ -28,9 +28,9 @@ export const logout = async () => {
   }
 };
 
-export const getNonce = async ({ evmAddress }) => {
+export const getNonce = async ({ walletAddress }) => {
   try {
-    const res = await mainInstance.post("/auth/login/metamask", { evmAddress });
+    const res = await mainInstance.post("/nonce", { walletAddress });
     if (res?.data?.nonce) {
       return res?.data?.nonce;
     } else {
@@ -41,12 +41,16 @@ export const getNonce = async ({ evmAddress }) => {
   }
 };
 
-export const validateSignature = async ({ evmAddress, nonce, signature }) => {
+export const validateSignature = async ({
+  walletAddress,
+  nonce,
+  signature,
+}) => {
   try {
     const res = await mainInstance.post(
-      "/auth/login/validateSignature",
+      "/validate_signature",
       {
-        evmAddress,
+        walletAddress,
         nonce,
         signature,
       },
