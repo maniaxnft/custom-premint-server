@@ -1,5 +1,4 @@
 import { useState } from "react";
-import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers } from "ethers";
 import toast from "react-hot-toast";
 
@@ -9,23 +8,8 @@ const useMetamaskLogin = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [evmAddress, setEvmAddress] = useState("");
 
-  const checkIfMetamaskPresent = async () => {
-    const provider = await detectEthereumProvider();
-    if (provider) {
-      startApp(provider);
-    } else {
-      throw new Error("Please install MetaMask!");
-    }
-    function startApp(provider) {
-      if (provider !== window.ethereum) {
-        throw new Error("Do you have multiple wallets installed?");
-      }
-    }
-  };
-
   const signAndVerifyMessage = async () => {
     try {
-      await checkIfMetamaskPresent();
       setIsConnecting(true);
 
       // Connect Metamask

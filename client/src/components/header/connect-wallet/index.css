@@ -30,9 +30,9 @@
 }
 
 .connectedDot {
-	height: 5px;
-	width: 5px;
-	background-color: $success-color;
-	border-radius: 50%;
-	display: inline-block;
-  }
+  height: 5px;
+  width: 5px;
+  background-color: $success-color;
+  border-radius: 50%;
+  display: inline-block;
+}

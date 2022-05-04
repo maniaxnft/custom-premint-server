@@ -23,7 +23,9 @@
     "react-google-recaptcha-v3": "^1.9.7",
     "react-hot-toast": "^2.2.0",
     "react-query": "^3.38.1",
+    "react-redux": "^8.0.1",
     "react-scripts": "4.0.3",
+    "redux": "^4.2.0",
     "yarn": "^1.22.17"
   },
   "devDependencies": {},
