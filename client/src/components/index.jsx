@@ -2,11 +2,11 @@ import React from "react";
 import "./App.css";
 
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+import { Toaster } from "react-hot-toast";
 
 import Header from "./header/Header";
 import Body from "./body/Body";
 import Footer from "./footer/Footer";
-
 
 const App = () => {
   return (
@@ -19,7 +19,7 @@ const App = () => {
         nonce: undefined,
       }}
     >
-      
+      <Toaster />
       <div>
         <Header />
         <Body />

@@ -31,6 +31,7 @@ export const logout = async () => {
 export const getNonce = async ({ walletAddress }) => {
   try {
     const res = await mainInstance.post("/nonce", { walletAddress });
+    console.log(res);
     if (res?.data?.nonce) {
       return res?.data?.nonce;
     } else {

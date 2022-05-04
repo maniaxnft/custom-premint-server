@@ -7,19 +7,26 @@ const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
 
-router.get("/nonce", async (req, res, next) => {
+router.post("/nonce", async (req, res, next) => {
   const nonce = generateNonce();
   const walletAddress = req.body.walletAddress;
 
   try {
-    await userModel.create({ walletAddress, nonce });
+    await userModel.create(
+      { walletAddress, nonce },
+      {
+        new: true,
+        upsert: true, // updates if exist
+      }
+    );
     res.send(nonce);
   } catch (e) {
+    console.log(e);
     res.status(500).send("An error occured, please contact administrator");
   }
 });
 
-router.get("/validate_signature", async (req, res, next) => {
+router.post("/validate_signature", async (req, res, next) => {
   let walletAddress = req.body.walletAddress;
   const signature = req.body.signature;
   const nonce = req.body.nonce;
