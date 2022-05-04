@@ -7,6 +7,7 @@ import { getNonce, logout, validateSignature } from "../../../services";
 
 const useMetamaskLogin = () => {
   const [isConnecting, setIsConnecting] = useState(false);
+  const [evmAddress, setEvmAddress] = useState("");
 
   const checkIfMetamaskPresent = async () => {
     const provider = await detectEthereumProvider();
@@ -65,6 +66,7 @@ const useMetamaskLogin = () => {
     isConnecting,
     signAndVerifyMessage,
     disconnectMetamask,
+    evmAddress
   };
 };
 

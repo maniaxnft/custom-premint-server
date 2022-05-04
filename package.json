@@ -3,16 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "cd client && yarn && yarn build && rm -rf node_nodules && cd .. && node index.js"
+    "dev": "nodemon src/index.js",
+    "start": "cd client && yarn && yarn build && rm -rf node_nodules && cd .. && node src/index.js"
   },
   "dependencies": {
     "body-parser": "^1.20.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^16.0.0",
+    "ethers": "^5.6.5",
     "express": "~4.16.1",
     "jade": "~1.11.0",
+    "mongoose": "^6.3.2",
     "morgan": "~1.9.1",
     "nodemon": "^2.0.16",
     "siwe": "^1.1.6"

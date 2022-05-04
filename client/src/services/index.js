@@ -52,11 +52,7 @@ export const validateSignature = async ({ evmAddress, nonce, signature }) => {
       },
       { withCredentials: true }
     );
-    if (res?.data) {
-      return res?.data;
-    } else {
-      throw new Error("Something went wrong");
-    }
+    return res?.data;
   } catch (e) {
     throw new Error(e.message);
   }
