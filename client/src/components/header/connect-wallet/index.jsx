@@ -5,7 +5,7 @@ import useMetamaskLogin from "./useMetamaskLogin";
 import MetamaskLogo from "../../../assets/metamask.png";
 
 const ConnectWallet = () => {
-  const { isConnecting, signAndVerifyMessage, disconnectMetamask, evmAddress } =
+  const { isConnecting, signAndVerifyMessage, evmAddress } =
     useMetamaskLogin();
 
   const truncateEthAddress = (address) => {

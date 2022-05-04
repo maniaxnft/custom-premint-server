@@ -12,7 +12,6 @@ const Jumbotron = () => {
 
   const checkIfMetamaskPresent = async () => {
     const provider = await detectEthereumProvider();
-    console.log(provider);
     if (provider) {
       dispatch({
         type: ACTIONS.IS_METAMASK_PRESENT,
@@ -38,6 +37,7 @@ const Jumbotron = () => {
 
   useEffect(() => {
     checkIfMetamaskPresent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

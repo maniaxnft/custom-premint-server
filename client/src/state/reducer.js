@@ -17,7 +17,7 @@ const reducer = (state = initialState, action) => {
     case ACTIONS.IS_METAMASK_PRESENT: {
       return {
         ...state,
-        evmAddress: action.payload.data,
+        isMetamaskPresent: action.payload.data,
       };
     }
 

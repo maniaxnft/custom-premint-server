@@ -44,7 +44,6 @@ router.get("/validate_signature", async (req, res, next) => {
     res.send("success");
   } catch (e) {
     res.status(400).send(e.message);
-    next(e);
   }
 });
 

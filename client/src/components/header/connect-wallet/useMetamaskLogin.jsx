@@ -8,7 +8,7 @@ import { getNonce, logout, validateSignature } from "../../../services";
 
 const useMetamaskLogin = () => {
   const [isConnecting, setIsConnecting] = useState(false);
-  const [evmAddress, setEvmAddress] = useState("");
+  const [address, setWalletAddress] = useState("");
 
   const signAndVerifyMessage = async () => {
     try {
@@ -45,7 +45,7 @@ const useMetamaskLogin = () => {
         signature,
       });
       setIsConnecting(false);
-      setEvmAddress(walletAddress)
+      setWalletAddress(walletAddress)
     } catch (error) {
       if (error?.code !== 4001) {
         toast.error(error.message);
@@ -62,7 +62,7 @@ const useMetamaskLogin = () => {
     isConnecting,
     signAndVerifyMessage,
     disconnect,
-    evmAddress
+    walletAddress: address
   };
 };
 
