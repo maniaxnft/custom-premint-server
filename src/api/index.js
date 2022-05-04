@@ -6,14 +6,40 @@ const { ethers } = require("ethers");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
+
 const signJwt = (user) => {
-  if (user && process.env.JWT_SECRET) {
-    const token = jwt.sign(user, process.env.JWT_SECRET, {
-      expiresIn: "30d",
-    });
-    return token;
-  } else {
-    throw new Error("Please provide user");
+  const token = jwt.sign(user, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+  return token;
+};
+const verifyJwtAndReturnUser = (token) => {
+  try {
+    const result = jwt.verify(token, process.env.JWT_SECRET);
+    return result;
+  } catch (e) {
+    throw new Error(e);
+  }
+};
+const authenticateUser = async (req, res, next) => {
+  const token = req.cookies?.token;
+
+  if (!token) {
+    return res.status(401).send("Token could not be found");
+  }
+  try {
+    const user = verifyJwtAndReturnUser(token);
+    req.walletAddress = user.walletAddress;
+    const userInDb = await userModel
+      .findOne({ walletAddress: user.walletAddress })
+      .lean();
+    if (!userInDb) {
+      throw new Error("User not found");
+    }
+    next();
+  } catch (e) {
+    res.clearCookie("token");
+    res.status(401).send(`Unauthenticated`);
   }
 };
 
@@ -31,7 +57,6 @@ router.post("/nonce", async (req, res, next) => {
     );
     res.send(nonce);
   } catch (e) {
-    console.log(e);
     res.status(500).send("An error occured, please contact administrator");
   }
 });
@@ -62,6 +87,14 @@ router.post("/validate_signature", async (req, res, next) => {
     res.send("success");
   } catch (e) {
     res.status(400).send(e.message);
+  }
+});
+
+router.get("/isAuthenticated", authenticateUser, (req, res) => {
+  if (req?.walletAddress) {
+    res.status(200).send({ walletAddress: req?.walletAddress });
+  } else {
+    res.status(401).send("nein");
   }
 });
 

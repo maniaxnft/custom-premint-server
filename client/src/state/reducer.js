@@ -3,6 +3,7 @@ import { ACTIONS } from "./actions";
 const initialState = {
   loading: false,
   isMetamaskPresent: true,
+  walletAddress: "",
 };
 
 const reducer = (state = initialState, action) => {
@@ -18,6 +19,13 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         isMetamaskPresent: action.payload.data,
+      };
+    }
+
+    case ACTIONS.SET_WALLET_ADDRESS: {
+      return {
+        ...state,
+        walletAddress: action.payload.data,
       };
     }
 

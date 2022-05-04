@@ -11,7 +11,7 @@ export const isAuthenticated = async () => {
     const res = await mainInstance.get("/isAuthenticated", {
       withCredentials: true,
     });
-    return res.data;
+    return res.data?.walletAddress;
   } catch (e) {
     return false;
   }
@@ -43,11 +43,15 @@ export const validateSignature = async ({
   signature,
 }) => {
   try {
-    const res = await mainInstance.post("/validate_signature", {
-      walletAddress,
-      nonce,
-      signature,
-    });
+    const res = await mainInstance.post(
+      "/validate_signature",
+      {
+        walletAddress,
+        nonce,
+        signature,
+      },
+      { withCredentials: true }
+    );
     return res.data;
   } catch (e) {
     throw new Error(e.message);
