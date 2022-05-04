@@ -5,7 +5,7 @@ import useMetamaskLogin from "./useMetamaskLogin";
 import MetamaskLogo from "../../../assets/metamask.png";
 
 const ConnectWallet = () => {
-  const { isConnecting, signAndVerifyMessage, evmAddress } = useMetamaskLogin();
+  const { isConnecting, signAndVerifyMessage, walletAddress } = useMetamaskLogin();
 
   const truncateEthAddress = (address) => {
     const truncateRegex = /^(0x[a-zA-Z0-9]{4})[a-zA-Z0-9]+([a-zA-Z0-9]{4})$/;
@@ -20,11 +20,11 @@ const ConnectWallet = () => {
       onClick={signAndVerifyMessage}
     >
       <img className="metamask-button-img" src={MetamaskLogo} alt="metamask" />
-      {evmAddress ? <span className="connectedDot"></span> : <></>}
+      {walletAddress ? <span className="connectedDot"></span> : <></>}
       <div className="metamask-button-text">
-        {!evmAddress && !isConnecting && "Connect Metamask"}
-        {evmAddress && `Connected to ${truncateEthAddress(evmAddress)}`}
-        {!evmAddress && isConnecting && "Connecting..."}
+        {!walletAddress && !isConnecting && "Connect Metamask"}
+        {walletAddress && `Connected to ${truncateEthAddress(walletAddress)}`}
+        {!walletAddress && isConnecting && "Connecting..."}
       </div>
     </div>
   );

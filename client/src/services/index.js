@@ -11,7 +11,7 @@ export const isAuthenticated = async () => {
     const res = await mainInstance.get("/isAuthenticated", {
       withCredentials: true,
     });
-    return res?.data?.keyIdentifier;
+    return res.data;
   } catch (e) {
     return false;
   }
@@ -31,12 +31,7 @@ export const logout = async () => {
 export const getNonce = async ({ walletAddress }) => {
   try {
     const res = await mainInstance.post("/nonce", { walletAddress });
-    console.log(res);
-    if (res?.data?.nonce) {
-      return res?.data?.nonce;
-    } else {
-      throw new Error("Something went wrong");
-    }
+    return res?.data;
   } catch (e) {
     throw new Error(e.message);
   }
@@ -48,16 +43,12 @@ export const validateSignature = async ({
   signature,
 }) => {
   try {
-    const res = await mainInstance.post(
-      "/validate_signature",
-      {
-        walletAddress,
-        nonce,
-        signature,
-      },
-      { withCredentials: true }
-    );
-    return res?.data;
+    const res = await mainInstance.post("/validate_signature", {
+      walletAddress,
+      nonce,
+      signature,
+    });
+    return res.data;
   } catch (e) {
     throw new Error(e.message);
   }

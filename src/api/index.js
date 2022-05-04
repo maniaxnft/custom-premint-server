@@ -6,6 +6,16 @@ const { ethers } = require("ethers");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
+const signJwt = (user) => {
+  if (user && process.env.JWT_SECRET) {
+    const token = jwt.sign(user, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
+    return token;
+  } else {
+    throw new Error("Please provide user");
+  }
+};
 
 router.post("/nonce", async (req, res, next) => {
   const nonce = generateNonce();
@@ -31,12 +41,13 @@ router.post("/validate_signature", async (req, res, next) => {
   const signature = req.body.signature;
   const nonce = req.body.nonce;
   walletAddress = walletAddress.toLowerCase();
+
   try {
     const signerAddress = ethers.utils.verifyMessage(nonce, signature);
     if (signerAddress.toLocaleLowerCase() !== walletAddress) {
       throw new Error("Signature validation failed");
     }
-    const user = await getUserByEvmAddressAndNonce({ walletAddress, nonce });
+    const user = await userModel.findOne({ walletAddress, nonce }).lean();
     if (!user) {
       throw new Error("User not found");
     }
@@ -53,16 +64,5 @@ router.post("/validate_signature", async (req, res, next) => {
     res.status(400).send(e.message);
   }
 });
-
-const signJwt = (user) => {
-  if (user && process.env.JWT_SECRET) {
-    const token = jwt.sign(user, secret, {
-      expiresIn: "30d",
-    });
-    return token;
-  } else {
-    throw new Error("Please provide user");
-  }
-};
 
 module.exports = router;
