@@ -48,13 +48,12 @@ router.post("/nonce", async (req, res, next) => {
   const walletAddress = req.body.walletAddress;
 
   try {
-    await userModel.create(
-      { walletAddress, nonce },
-      {
-        new: true,
-        upsert: true, // updates if exist
-      }
-    );
+    const user = await userModel.findOne({ walletAddress });
+    if (user) {
+      await userModel.findOneAndUpdate({ walletAddress }, { nonce });
+    } else {
+      await userModel.create({ walletAddress, nonce });
+    }
     res.send(nonce);
   } catch (e) {
     res.status(500).send("An error occured, please contact administrator");
