@@ -29,6 +29,20 @@ const reducer = (state = initialState, action) => {
       };
     }
 
+    case ACTIONS.SET_DISCORD_NAME: {
+      return {
+        ...state,
+        discordName: action.payload.data,
+      };
+    }
+
+    case ACTIONS.SET_TWITTER_NAME: {
+      return {
+        ...state,
+        twitterName: action.payload.data,
+      };
+    }
+
     default:
       return {
         ...state,

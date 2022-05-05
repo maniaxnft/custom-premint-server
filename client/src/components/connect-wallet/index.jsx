@@ -22,7 +22,7 @@ const ConnectWallet = () => {
     >
       <img className="metamask-button-img" src={MetamaskLogo} alt="metamask" />
       {walletAddress ? <span className="connectedDot"></span> : <></>}
-      <div className="metamask-button-text">
+      <div className="metamask-button-text unselectable">
         {!walletAddress && !isConnecting && "Connect Metamask"}
         {walletAddress && `Connected to ${truncateEthAddress(walletAddress)}`}
         {!walletAddress && isConnecting && "Connecting..."}
