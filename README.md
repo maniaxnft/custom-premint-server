@@ -13,10 +13,14 @@ Enter relevant env vars within `.env` file
 
 ## Step 3
 
+1. Install npm packages
+
 ```bat
-yarn start &&  cd client && yarn
+yarn  && cd client && yarn
 
 ```
+
+2. Run the app
 
 ```bat
 yarn start &&  node src/index.js
