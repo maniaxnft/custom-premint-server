@@ -73,6 +73,32 @@ export const authenticateDiscord = async (code) => {
   }
 };
 
+export const authenticateTwitter = async (code) => {
+  try {
+    const res = await mainInstance.post(
+      "/oauth/twitter",
+      {
+        code,
+      },
+      { withCredentials: true }
+    );
+    return res.data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+};
+
+export const requestTwitterToken = async () => {
+  try {
+    const res = await mainInstance.get("/oauth/twitter/request_token", {
+      withCredentials: true,
+    });
+    return res.data?.oauth_token;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+};
+
 export const getUserInfo = async () => {
   try {
     const res = await mainInstance.get("/user", { withCredentials: true });

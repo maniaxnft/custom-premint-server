@@ -2,10 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const axios = require("axios");
+const OAuth = require("oauth");
+const util = require("util");
 
 const userModel = require("../repository/models");
 const { authenticateUser } = require("../middleware");
 const { id } = require("ethers/lib/utils");
+const Oauth1Helper = require("./helper");
 
 router.post("/discord", authenticateUser, async (req, res) => {
   const walletAddress = req.walletAddress;
@@ -51,6 +54,31 @@ router.post("/discord", authenticateUser, async (req, res) => {
     }
   } else {
     res.sendStatus(401);
+  }
+});
+
+router.get("/twitter/request_token", authenticateUser, async (req, res) => {
+  const request = {
+    url: `https://api.twitter.com/oauth/request_token?oauth_callback=${process.env.TWITTER_CALLBACK_URL}`,
+    method: "POST",
+  };
+  const authHeader = Oauth1Helper.getAuthHeaderForRequest(
+    request.method,
+    request.url
+  );
+
+  try {
+    const response = await axios.post(request.url, null, {
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(response.data);
+    res.send(response.data);
+  } catch (e) {
+    console.log(JSON.stringify(e, null, 2));
+    res.sendStatus(500);
   }
 });
 
