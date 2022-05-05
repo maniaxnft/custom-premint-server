@@ -14,6 +14,11 @@ Enter relevant env vars within `.env` file
 ## Step 3
 
 ```bat
+yarn start &&  cd client && yarn
+
+```
+
+```bat
 yarn start &&  node src/index.js
 
 ```
