@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./index.css";
 
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import classNames from 'classnames'
+import classNames from "classnames";
 
 import Logo from "../../assets/discord.svg";
 import { authenticateDiscord } from "../../services";
@@ -11,8 +11,8 @@ import { ACTIONS } from "../../state/actions";
 
 const ConnectDiscord = () => {
   const discordName = useSelector((state) => state.discordName);
-  const dispatch = useDispatch()
-
+  const dispatch = useDispatch();
+  const [success, setSuccess] = useState(false);
 
   const onClick = () => {
     if (!discordName) {
@@ -40,11 +40,26 @@ const ConnectDiscord = () => {
             },
           });
           clearUrlParams();
+          setSuccess(true);
+          toast.success(`Discord successfully connected, ${discordName}`);
+          const canvas = document.getElementById("confetti");
+          const myConfetti = window.confetti.create(canvas, {
+            resize: true,
+            useWorker: true,
+          });
+          myConfetti({
+            particleCount: 300,
+            spread: 400,
+          });
+          setTimeout(() => {
+            window.confetti.reset();
+            setSuccess(false);
+          }, 1500);
         } catch (e) {
           dispatch({
             type: ACTIONS.SET_DISCORD_NAME,
             payload: {
-              data: '',
+              data: "",
             },
           });
           toast.error(e.message);
@@ -53,16 +68,27 @@ const ConnectDiscord = () => {
       }
     };
     authenticate();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className={classNames({ connect_discord: true, connect_discord__disabled: discordName })} onClick={onClick}>
-      <img src={Logo} alt="discord" className="connect_discord__logo" />
-      <div className="connect_discord__text">
-        {discordName ? `You are successfully connected, ${discordName}!` : "Connect Discord"}
+    <>
+      <div
+        className={classNames({
+          connect_discord: true,
+          connect_discord__disabled: discordName,
+        })}
+        onClick={onClick}
+      >
+        <img src={Logo} alt="discord" className="connect_discord__logo" />
+        <div className="connect_discord__text">
+          {discordName
+            ? `You are successfully connected, ${discordName}!`
+            : "Connect Discord"}
+        </div>
       </div>
-    </div>
+      {success && <canvas id="confetti"></canvas>}
+    </>
   );
 };
 

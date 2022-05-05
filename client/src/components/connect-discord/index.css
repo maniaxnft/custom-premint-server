@@ -24,5 +24,11 @@
 }
 
 .connect_discord__text {
+	color: white;
 	margin-left: 10px;
+}
+#confetti {
+	position: absolute;
+	width: 100vh;
+	height: 100vh;
 }
