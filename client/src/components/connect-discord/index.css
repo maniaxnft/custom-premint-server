@@ -1,6 +1,6 @@
 
 .connect_discord {
-	width: 200px;
+	min-width: 200px;
 	height: 30px;
 	padding: 10px;
 	display: flex;
@@ -11,6 +11,9 @@
 	background-color: #5865F2;
 	border-radius: 5px;
 	font-size: 20px;
+}
+.connect_discord__disabled {
+	pointer-events:none
 }
 .connect_discord:hover {
 	cursor: pointer;

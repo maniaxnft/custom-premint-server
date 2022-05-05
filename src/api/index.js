@@ -6,41 +6,13 @@ const { ethers } = require("ethers");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
+const { authenticateUser } = require("./middleware");
 
 const signJwt = (user) => {
   const token = jwt.sign(user, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
   return token;
-};
-const verifyJwtAndReturnUser = (token) => {
-  try {
-    const result = jwt.verify(token, process.env.JWT_SECRET);
-    return result;
-  } catch (e) {
-    throw new Error(e);
-  }
-};
-const authenticateUser = async (req, res, next) => {
-  const token = req.cookies?.token;
-
-  if (!token) {
-    return res.status(401).send("Token could not be found");
-  }
-  try {
-    const user = verifyJwtAndReturnUser(token);
-    req.walletAddress = user.walletAddress;
-    const userInDb = await userModel
-      .findOne({ walletAddress: user.walletAddress })
-      .lean();
-    if (!userInDb) {
-      throw new Error("User not found");
-    }
-    next();
-  } catch (e) {
-    res.clearCookie("token");
-    res.status(401).send(`Unauthenticated`);
-  }
 };
 
 router.post("/nonce", async (req, res, next) => {
@@ -95,6 +67,15 @@ router.get("/isAuthenticated", authenticateUser, (req, res) => {
   } else {
     res.status(401).send("nein");
   }
+});
+
+router.get("/user", authenticateUser, async (req, res) => {
+  const walletAddress = req?.walletAddress;
+  const user = await userModel.findOne({ walletAddress }).lean();
+  res.json({
+    discordName: user.discordName,
+    twitterName: user.twitterName,
+  });
 });
 
 module.exports = router;

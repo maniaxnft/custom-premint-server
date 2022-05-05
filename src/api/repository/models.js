@@ -7,10 +7,16 @@ const userSchema = mongoose.Schema({
   nonce: {
     type: String,
   },
-  discord: {
+  discordId: {
     type: String,
   },
-  twitter: {
+  twitterId: {
+    type: String,
+  },
+  discordName: {
+    type: String,
+  },
+  twitterName: {
     type: String,
   },
 });

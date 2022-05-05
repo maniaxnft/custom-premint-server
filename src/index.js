@@ -8,6 +8,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const api = require("./api");
+const oauth = require("./api/oauth");
 
 const boot = async () => {
   try {
@@ -32,6 +33,7 @@ const boot = async () => {
   app.use(express.static(path.join(__dirname, "client/build")));
 
   app.use("/api", api);
+  app.use("/api/oauth", oauth);
 
   // start
   const port = process.env.PORT;

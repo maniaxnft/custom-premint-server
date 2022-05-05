@@ -57,3 +57,27 @@ export const validateSignature = async ({
     throw new Error(e.message);
   }
 };
+
+export const authenticateDiscord = async (code) => {
+  try {
+    const res = await mainInstance.post(
+      "/oauth/discord",
+      {
+        code,
+      },
+      { withCredentials: true }
+    );
+    return res.data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+};
+
+export const getUserInfo = async () => {
+  try {
+    const res = await mainInstance.get("/user", { withCredentials: true });
+    return res.data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+};

@@ -1,6 +1,6 @@
 
 .connect_twitter {
-	width: 200px;
+	min-width: 200px;
 	height: 30px;
 	padding: 10px;
 	display: flex;
