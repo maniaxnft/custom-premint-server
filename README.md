@@ -16,7 +16,7 @@ Enter relevant env vars within `.env` file
 1. Install npm packages
 
 ```bat
-yarn  && cd client && yarn
+yarn && cd client && yarn
 
 ```
 
