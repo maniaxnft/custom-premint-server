@@ -13,10 +13,6 @@ Enter relevant env vars within `.env` file
 
 ## Step 3
 
-Enter relevant env vars within `.env` file
-
-## Step 4
-
 ```bat
 yarn start &&  node src/index.js
 
