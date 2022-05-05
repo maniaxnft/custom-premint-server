@@ -16,13 +16,13 @@ Enter relevant env vars within `.env` file
 1. Install npm packages
 
 ```bat
-yarn  && cd client && yarn
+yarn && cd client && yarn
 
 ```
 
 2. Run the app
 
 ```bat
-yarn start &&  node src/index.js
+yarn start && node src/index.js
 
 ```
