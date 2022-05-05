@@ -23,6 +23,6 @@ yarn && cd client && yarn
 2. Run the app
 
 ```bat
-yarn start &&  node src/index.js
+yarn start && node src/index.js
 
 ```
