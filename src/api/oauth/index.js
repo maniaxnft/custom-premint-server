@@ -8,7 +8,7 @@ const util = require("util");
 const userModel = require("../repository/models");
 const { authenticateUser } = require("../middleware");
 const { id } = require("ethers/lib/utils");
-const Oauth1Helper = require("./helper");
+const { createOauthHeader } = require("./helper");
 
 router.post("/discord", authenticateUser, async (req, res) => {
   const walletAddress = req.walletAddress;
@@ -58,26 +58,26 @@ router.post("/discord", authenticateUser, async (req, res) => {
 });
 
 router.get("/twitter/request_token", authenticateUser, async (req, res) => {
-  const request = {
-    url: `https://api.twitter.com/oauth/request_token?oauth_callback=${process.env.TWITTER_CALLBACK_URL}`,
-    method: "POST",
-  };
-  const authHeader = Oauth1Helper.getAuthHeaderForRequest(
-    request.method,
-    request.url
-  );
+  const url = `https://api.twitter.com/oauth/request_token`;
+  const method = "POST";
+  const params = new URLSearchParams({
+    oauth_callback: process.env.TWITTER_CALLBACK_URL,
+  });
 
   try {
-    const response = await axios.post(request.url, null, {
+    const response = await axios.post(url, undefined, {
+      params,
       headers: {
-        Authorization: authHeader,
-        "Content-Type": "application/json",
+        Authorization: createOauthHeader({
+          method,
+          url: `${url}?${params}`,
+        }),
       },
     });
     console.log(response.data);
     res.send(response.data);
   } catch (e) {
-    console.log(JSON.stringify(e, null, 2));
+    console.log(e?.response?.data);
     res.sendStatus(500);
   }
 });
