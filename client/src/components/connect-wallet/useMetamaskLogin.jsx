@@ -8,9 +8,9 @@ import {
   logout,
   validateSignature,
   isAuthenticated,
-} from "../../../services";
+} from "../../services";
 import { useDispatch, useSelector } from "react-redux";
-import { ACTIONS } from "../../../state/actions";
+import { ACTIONS } from "../../state/actions";
 
 const useMetamaskLogin = () => {
   const [isConnecting, setIsConnecting] = useState(false);

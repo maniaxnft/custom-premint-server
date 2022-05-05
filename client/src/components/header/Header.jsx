@@ -3,7 +3,7 @@ import "./Header.css";
 
 import { useSelector } from "react-redux";
 
-import ConnectWallet from "./connect-wallet";
+import ConnectWallet from "../connect-wallet";
 
 const Header = () => {
   const isMetamaskPresent = useSelector((state) => state.isMetamaskPresent);

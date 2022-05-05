@@ -2,7 +2,7 @@ import React from "react";
 import "./index.css";
 
 import useMetamaskLogin from "./useMetamaskLogin";
-import MetamaskLogo from "../../../assets/metamask.png";
+import MetamaskLogo from "../../assets/metamask.png";
 
 const ConnectWallet = () => {
   const { isConnecting, signAndVerifyMessage, walletAddress } =

@@ -1,0 +1,25 @@
+
+.connect_discord {
+	width: 200px;
+	height: 30px;
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	color: white;
+	background-color: #5865F2;
+	border-radius: 5px;
+	font-size: 20px;
+}
+.connect_discord:hover {
+	cursor: pointer;
+	opacity: 0.8;
+}
+.connect_discord__logo {
+	height: 15px;
+}
+
+.connect_discord__text {
+	margin-left: 10px;
+}
