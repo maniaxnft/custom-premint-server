@@ -26,7 +26,7 @@ class Oauth1Helper {
         ordered[key] = parameters[key];
       });
     let encodedParameters = "";
-    for (k in ordered) {
+    for (let k in ordered) {
       const encodedValue = escape(ordered[k]);
       const encodedKey = encodeURIComponent(k);
       if (encodedParameters === "") {
@@ -44,7 +44,7 @@ class Oauth1Helper {
       secret_token
     )}`;
 
-    const ouath_signature = crypto
+    const oauth_signature = crypto
       .createHmac("sha1", signing_key)
       .update(signature_base_string)
       .digest("base64");
