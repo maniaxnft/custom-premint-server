@@ -34,7 +34,7 @@ const App = () => {
                 data: user.twitterName,
               },
             });
-          }, 500);
+          }, 150);
         }
       } catch (e) {
         console.log(e);
