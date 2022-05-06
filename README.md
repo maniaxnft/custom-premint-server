@@ -6,7 +6,7 @@ There is already Premint existing but this app allows you to customize it, add s
 ## Step 1
 
 - Create Discord app and get `client_id` and `client_secret` and add them to the `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET` env vars
-- Create Twtiiter app and get consumer token, consumer token secret, access token and access token secret and place them in env vars as `TWITTER_CONSUMER_KEY` `TWITTER_CONSUMER_SECRET` `TWITTER_ACCESS_TOKEN_KEY` `TWITTER_ACCESS_TOKEN_SECRET`  
+- Create Twitter app and get consumer token, consumer token secret, access token and access token secret and place them in env vars as `TWITTER_CONSUMER_KEY` `TWITTER_CONSUMER_SECRET` `TWITTER_ACCESS_TOKEN_KEY` `TWITTER_ACCESS_TOKEN_SECRET`  
 
 ## Step 2
 
