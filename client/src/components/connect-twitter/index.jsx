@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import classNames from "classnames";
 
 import Logo from "../../assets/twitter.svg";
-import { ACTIONS } from "../../state/actions";
 import {
   requestTwitterToken,
   checkTwitterResult,
@@ -15,7 +14,6 @@ import {
 const ConnectTwitter = () => {
   const twitterName = useSelector((state) => state.twitterName);
 
-  const dispatch = useDispatch();
   const [success, setSuccess] = useState(false);
 
   const showSuccess = () => {
@@ -41,14 +39,13 @@ const ConnectTwitter = () => {
     const url = window.location.href.split("/");
     const authenticate = async () => {
       try {
-        const result = await checkTwitterResult();
-        console.log(result);
+        await checkTwitterResult();
         showSuccess()
       } catch (e) {
         toast.error(e.message);
       }
     };
-    if (url[2] === "twitter-result") {
+    if (url[3] === "twitter-result") {
       authenticate();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +68,7 @@ const ConnectTwitter = () => {
 
   const clearUrlParams = () => {
     const currURL = window.location.href;
-    const url = currURL.split(window.location.host)[1].split("?")[0];
+    const url = currURL.split(window.location.host)[1].split("/")[0];
     window.history.pushState({}, document.title, url);
   };
 
@@ -86,7 +83,7 @@ const ConnectTwitter = () => {
       >
         <img src={Logo} alt="twitter" className="connect_twitter__logo" />
         <div className="connect_twitter__text">
-          {twitterName ? `Connected to ${twitterName}` : "Connect Twitter"}
+          {twitterName ? `You are successfully connected, ${twitterName}!` : "Connect Twitter"}
         </div>
       </div>
       {success && <canvas id="confetti_twitter"></canvas>}

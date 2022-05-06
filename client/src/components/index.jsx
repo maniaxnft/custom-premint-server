@@ -16,26 +16,32 @@ const App = () => {
 
   useEffect(() => {
     const initUser = async () => {
-      const user = await getUserInfo();
-      if (user?.discordName) {
-        dispatch({
-          type: ACTIONS.SET_DISCORD_NAME,
-          payload: {
-            data: user.discordName,
-          },
-        });
-      }
-      if (user?.twitterName) {
-        dispatch({
-          type: ACTIONS.SET_TWITTER_NAME,
-          payload: {
-            data: user.twitterName,
-          },
-        });
+      try {
+        const user = await getUserInfo();
+        if (user?.discordName) {
+          dispatch({
+            type: ACTIONS.SET_DISCORD_NAME,
+            payload: {
+              data: user.discordName,
+            },
+          });
+        }
+        if (user?.twitterName) {
+          setTimeout(() => {
+            dispatch({
+              type: ACTIONS.SET_TWITTER_NAME,
+              payload: {
+                data: user.twitterName,
+              },
+            });
+          }, 500);
+        }
+      } catch (e) {
+        console.log(e);
       }
     };
     initUser();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

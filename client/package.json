@@ -1,5 +1,5 @@
 {
-  "name": "verify-wallet-discord-twitter",
+  "name": "custom-premint-client",
   "version": "0.1.0",
   "private": true,
   "scripts": {

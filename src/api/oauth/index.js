@@ -45,13 +45,13 @@ router.post("/discord", authenticateUser, async (req, res) => {
         );
         res.send(userResponse.data?.username);
       } else {
-        res.sendStatus(500);
+        res.status(500);
       }
     } catch (e) {
-      res.sendStatus(400);
+      res.status(400);
     }
   } else {
-    res.sendStatus(401);
+    res.status(401);
   }
 });
 
@@ -76,10 +76,10 @@ router.get("/twitter/request_token", authenticateUser, async (req, res) => {
       });
       res.send(response.oauth_token);
     } else {
-      res.sendStatus(500);
+      res.status(500);
     }
   } catch (e) {
-    res.sendStatus(500);
+    res.status(500);
   }
 });
 
@@ -162,7 +162,7 @@ router.get("/twitter/check", authenticateUser, async (req, res) => {
       walletAddress,
     });
     if (!twitterCallback) {
-      res.sendStatus(200);
+      res.status(200);
     }
     if (twitterCallback?.error) {
       res.status(400).send(twitterCallback?.error);
@@ -170,10 +170,10 @@ router.get("/twitter/check", authenticateUser, async (req, res) => {
     if (user.twitterName && user.twitterId) {
       res.send(user.twitterName);
     } else {
-      res.sendStatus(400);
+      res.status(400);
     }
   } catch (e) {
-    res.sendStatus(500);
+    res.status(500);
   }
 });
 
