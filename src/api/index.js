@@ -15,7 +15,7 @@ const signJwt = (user) => {
   return token;
 };
 
-router.post("/nonce", async (req, res, next) => {
+router.post("/nonce", async (req, res) => {
   const nonce = generateNonce();
   const walletAddress = req.body.walletAddress;
 
@@ -32,7 +32,7 @@ router.post("/nonce", async (req, res, next) => {
   }
 });
 
-router.post("/validate_signature", async (req, res, next) => {
+router.post("/validate_signature", async (req, res) => {
   let walletAddress = req.body.walletAddress;
   const signature = req.body.signature;
   const nonce = req.body.nonce;

@@ -10,10 +10,10 @@ const userSchema = mongoose.Schema({
   discordId: {
     type: String,
   },
-  twitterId: {
+  discordName: {
     type: String,
   },
-  discordName: {
+  twitterId: {
     type: String,
   },
   twitterName: {
