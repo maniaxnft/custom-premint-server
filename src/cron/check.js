@@ -15,17 +15,17 @@ const checkIfEligibleForRoles = async () => {
     ],
   });
   try {
-    await bot.login(process.env.DISCORD_TOKEN);
+    await bot.login(process.env.DISCORD_BOT_TOKEN);
   } catch (e) {
     throw new Error(e);
   }
 
-  const guild = await bot.guilds?.fetch(process.env.DISCORD_GUILD_ID);
+  const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
   const maniacRole = guild.roles.cache.find(
-    (r) => r.id === `${process.env.DISCORD_MANIAC_ROLE_ID}`
+    (r) => r.id === `${process.env.DISCORD_BOT_MANIAC_ROLE_ID}`
   );
   const maniaxRole = guild.roles.cache.find(
-    (r) => r.id === `${process.env.DISCORD_MANIAX_ROLE_ID}`
+    (r) => r.id === `${process.env.DISCORD_BOT_MANIAX_ROLE_ID}`
   );
 
   const users = await userModel.find({}).lean();

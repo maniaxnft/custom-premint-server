@@ -9,9 +9,11 @@ const { authenticateUser } = require("../middleware");
 const twitterCallbackModel = require("./model");
 
 router.post("/discord", authenticateUser, async (req, res) => {
+  console.log("in!");
   const walletAddress = req.walletAddress;
   const code = req.body?.code;
   if (code) {
+    console.log(code);
     try {
       const params = new URLSearchParams();
       params.append("client_id", process.env.DISCORD_CLIENT_ID);
@@ -27,6 +29,8 @@ router.post("/discord", authenticateUser, async (req, res) => {
         { headers: { "Content-type": "application/x-www-form-urlencoded" } }
       );
       const access_token = response.data?.access_token;
+      console.log(access_token);
+
       const userResponse = await axios.get(
         "https://discord.com/api/users/@me",
         {
