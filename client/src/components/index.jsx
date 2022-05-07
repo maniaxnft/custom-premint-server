@@ -27,14 +27,12 @@ const App = () => {
           });
         }
         if (user?.twitterName) {
-          setTimeout(() => {
             dispatch({
               type: ACTIONS.SET_TWITTER_NAME,
               payload: {
                 data: user.twitterName,
               },
             });
-          }, 150);
         }
       } catch (e) {
         console.log(e);
