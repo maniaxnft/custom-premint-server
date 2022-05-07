@@ -47,6 +47,13 @@ const check = async (bot) => {
 
   const users = await userModel.find({}).lean();
   for (let user of users) {
+    const discordMember = guild.members.cache.get(user.discordId);
+    let teamMember = discordMember?._roles.filter(
+      (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
+    );
+    if (teamMember) {
+      return;
+    }
     if (user.walletAddress && user.discordId && user.twitterId) {
       try {
         const res = await axios.get(
@@ -59,18 +66,10 @@ const check = async (bot) => {
         );
         const result = res.data?.result;
 
-        const discordMember = guild.members.cache.get(user.discordId);
-        if (discordMember) {
-          let isTeamMember = discordMember?._roles.filter(
-            (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
-          );
-          if (!isTeamMember) {
-            checkIfManiac(result, discordMember, maniacRole);
-            checkIfManiax(result, discordMember, maniaxRole);
-            await checkIfRareX(result, discordMember, rarexRole);
-            wait(1000);
-          }
-        }
+        checkIfManiac(result, discordMember, maniacRole);
+        checkIfManiax(result, discordMember, maniaxRole);
+        await checkIfRareX(result, discordMember, rarexRole);
+        wait(1000);
       } catch (e) {
         sendErrorToLogChannel(bot, e.response?.data?.message, e);
       }
