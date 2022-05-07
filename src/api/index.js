@@ -69,6 +69,11 @@ router.get("/isAuthenticated", authenticateUser, (req, res) => {
   }
 });
 
+router.get("/logout", authenticateUser, async (req, res) => {
+  res.clearCookie("token");
+  res.status(401).send(`Logged out`);
+});
+
 router.get("/user", authenticateUser, async (req, res) => {
   const walletAddress = req?.walletAddress;
   const user = await userModel.findOne({ walletAddress }).lean();
