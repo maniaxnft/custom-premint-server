@@ -6,7 +6,6 @@ const userModel = require("../api/repository/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
 const checkIfEligibleForRoles = () => {
-  main();
   cron.schedule("*/30 * * * *", () => {
     main();
   });
@@ -44,6 +43,7 @@ const check = async (bot) => {
   const rarexRole = guild.roles?.cache?.find(
     (r) => r.id === `${process.env.DISCORD_BOT_RAREX_ROLE_ID}`
   );
+  sendErrorToLogChannel(bot, "Role cron started");
 
   const users = await userModel.find({}).lean();
   for (let user of users) {
