@@ -6,6 +6,7 @@ const userModel = require("../api/repository/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
 const checkIfEligibleForRoles = () => {
+  main();
   cron.schedule("*/30 * * * *", () => {
     main();
   });
@@ -57,11 +58,18 @@ const check = async (bot) => {
           }
         );
         const result = res.data?.result;
-        const discordUser = guild.members.cache.get(user.discordId);
-        checkIfManiac(result, discordUser, maniacRole);
-        checkIfManiax(result, discordUser, maniaxRole);
-        await checkIfRareX(result, discordUser, rarexRole);
-        wait(1000);
+        const discordMember = guild.members.cache.get(user.discordId);
+        if (discordMember) {
+          let isTeamMember = discordMember?._roles.filter(
+            (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
+          );
+          if (!isTeamMember) {
+            checkIfManiac(result, discordMember, maniacRole);
+            checkIfManiax(result, discordMember, maniaxRole);
+            await checkIfRareX(result, discordMember, rarexRole);
+            wait(1000);
+          }
+        }
       } catch (e) {
         sendErrorToLogChannel(bot, e.response?.data?.message, e);
       }
@@ -69,27 +77,27 @@ const check = async (bot) => {
   }
 };
 
-const checkIfManiac = (result, discordUser, maniacRole) => {
+const checkIfManiac = (result, discordMember, maniacRole) => {
   if (result.length === 0) {
-    discordUser.roles.remove(maniacRole);
+    discordMember.roles.remove(maniacRole);
   }
   if (result.length === 1) {
-    discordUser.roles.add(maniacRole);
+    discordMember.roles.add(maniacRole);
   }
 };
 
-const checkIfManiax = (result, discordUser, maniaxRole) => {
+const checkIfManiax = (result, discordMember, maniaxRole) => {
   if (result.length < 5) {
-    discordUser.roles.remove(maniaxRole);
+    discordMember.roles.remove(maniaxRole);
   }
   if (result.length >= 5) {
-    discordUser.roles.add(maniaxRole);
+    discordMember.roles.add(maniaxRole);
   }
 };
 
-const checkIfRareX = async (result, discordUser, rarexRole) => {
+const checkIfRareX = async (result, discordMember, rarexRole) => {
   if (result.length === 0) {
-    discordUser.roles.remove(rarexRole);
+    discordMember.roles.remove(rarexRole);
     return;
   }
 
