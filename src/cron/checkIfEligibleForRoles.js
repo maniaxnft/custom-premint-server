@@ -58,6 +58,7 @@ const check = async (bot) => {
           }
         );
         const result = res.data?.result;
+
         const discordMember = guild.members.cache.get(user.discordId);
         if (discordMember) {
           let isTeamMember = discordMember?._roles.filter(
@@ -100,12 +101,11 @@ const checkIfRareX = async (result, discordMember, rarexRole) => {
     discordMember.roles.remove(rarexRole);
     return;
   }
-
   const tokenIds = result.map((res) => res.token_id);
   let hasRare = false;
   for (let tokenId of tokenIds) {
     const metadata = await axios.get(
-      `${process.env.MORALIS_NFT_URL}/${process.env.NFT_CONTRACT_ADDRESS}/${tokenId}?chain=${process.env.NFT_CHAIN}&format=decimal`,
+      `${process.env.MORALIS_NFT_URL}/${process.env.NFT_CONTRACT_ADDRESS}/${tokenId}?chain=${process.env.NFT_CHAIN}&format=decimal&limit=500`,
       {
         headers: {
           "x-api-key": process.env.MORALIS_WEB3_API_KEY,
@@ -122,9 +122,9 @@ const checkIfRareX = async (result, discordMember, rarexRole) => {
     }
   }
   if (hasRare) {
-    discordUser.roles.add(rarexRole);
+    discordMember.roles.add(rarexRole);
   } else {
-    discordUser.roles.remove(rarexRole);
+    discordMember.roles.remove(rarexRole);
   }
 };
 
