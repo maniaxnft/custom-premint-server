@@ -6,7 +6,7 @@ const userModel = require("../api/repository/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
 const checkIfEligibleForRoles = () => {
-  cron.schedule("*/15 * * * *", () => {
+  cron.schedule("*/30 * * * *", () => {
     main();
   });
 };
@@ -40,6 +40,9 @@ const check = async (bot) => {
   const maniaxRole = guild.roles?.cache?.find(
     (r) => r.id === `${process.env.DISCORD_BOT_MANIAX_ROLE_ID}`
   );
+  const rarexRole = guild.roles?.cache?.find(
+    (r) => r.id === `${process.env.DISCORD_BOT_RAREX_ROLE_ID}`
+  );
 
   const users = await userModel.find({}).lean();
   for (let user of users) {
@@ -57,6 +60,7 @@ const check = async (bot) => {
         const discordUser = guild.members.cache.get(user.discordId);
         checkIfManiac(result, discordUser, maniacRole);
         checkIfManiax(result, discordUser, maniaxRole);
+        await checkIfRareX(result, discordUser, rarexRole);
         wait(1000);
       } catch (e) {
         sendErrorToLogChannel(bot, e.response?.data?.message, e);
@@ -80,6 +84,39 @@ const checkIfManiax = (result, discordUser, maniaxRole) => {
   }
   if (result.length >= 5) {
     discordUser.roles.add(maniaxRole);
+  }
+};
+
+const checkIfRareX = async (result, discordUser, rarexRole) => {
+  if (result.length === 0) {
+    discordUser.roles.remove(rarexRole);
+    return;
+  }
+
+  const tokenIds = result.map((res) => res.token_id);
+  let hasRare = false;
+  for (let tokenId of tokenIds) {
+    const metadata = await axios.get(
+      `${process.env.MORALIS_NFT_URL}/${process.env.NFT_CONTRACT_ADDRESS}/${tokenId}?chain=${process.env.NFT_CHAIN}&format=decimal`,
+      {
+        headers: {
+          "x-api-key": process.env.MORALIS_WEB3_API_KEY,
+        },
+      }
+    );
+    const meta = JSON.parse(metadata?.data?.metadata);
+    const rarity = meta?.attributes
+      ? meta.attributes[meta.attributes.length - 1]?.value
+      : undefined;
+    if (rarity === "Rare") {
+      hasRare = true;
+      break;
+    }
+  }
+  if (hasRare) {
+    discordUser.roles.add(rarexRole);
+  } else {
+    discordUser.roles.remove(rarexRole);
   }
 };
 
