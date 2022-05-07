@@ -83,6 +83,4 @@ const checkIfManiax = (result, discordUser, maniaxRole) => {
   }
 };
 
-module.exports = {
-  checkIfEligibleForRoles,
-};
+module.exports = checkIfEligibleForRoles;

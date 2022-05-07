@@ -9,7 +9,7 @@ const mongoose = require("mongoose");
 
 const api = require("./api");
 const oauth = require("./api/oauth");
-const { checkIfEligibleForRoles } = require("./cron/check");
+const checkIfEligibleForRoles = require("./cron/checkIfEligibleForRoles");
 
 const boot = async () => {
   try {
