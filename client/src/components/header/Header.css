@@ -15,9 +15,22 @@
 }
 
 .header-logo {
-  color: white;
-  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   pointer-events: none;
+}
+
+.header-logo-image {
+  width: 35px;
+  margin-right: 5px;
+  border-radius: 3px;
+}
+
+.header-logo-text {
+  color: white;
+  font-size: 26px;
+  margin-top: 3px;
 }
 
 .header-wallets {
