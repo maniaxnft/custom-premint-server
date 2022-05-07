@@ -2,7 +2,6 @@
 require("dotenv").config();
 
 const express = require("express");
-const path = require("path");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -32,7 +31,6 @@ const boot = async () => {
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
   app.use(bodyParser.json());
-  app.use(express.static(path.join(__dirname, "client/build")));
 
   app.use("/api", api);
   app.use("/api/oauth", oauth);
