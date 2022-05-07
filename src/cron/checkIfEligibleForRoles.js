@@ -24,8 +24,6 @@ const main = async () => {
   try {
     await bot.login(process.env.DISCORD_BOT_TOKEN);
     await wait(3000);
-    // eslint-disable-next-line no-console
-    console.log("Discord bot is logged in");
     check(bot);
   } catch (e) {
     throw new Error(e);
