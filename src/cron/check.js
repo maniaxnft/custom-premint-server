@@ -1,10 +1,17 @@
 const axios = require("axios");
 const Discord = require("discord.js");
+const cron = require("node-cron");
 
 const userModel = require("../api/repository/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
-const checkIfEligibleForRoles = async () => {
+const checkIfEligibleForRoles = () => {
+  cron.schedule("*/15 * * * *", () => {
+    main();
+  });
+};
+
+const main = async () => {
   const bot = new Discord.Client({
     intents: [
       Discord.Intents.FLAGS.GUILDS,
