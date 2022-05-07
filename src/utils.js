@@ -10,7 +10,9 @@ const sendErrorToLogChannel = async (bot, message, e) => {
     }
   }
 };
+const wait = require("timers/promises").setTimeout;
 
 module.exports = {
   sendErrorToLogChannel,
+  wait,
 };
