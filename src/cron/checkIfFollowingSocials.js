@@ -33,54 +33,56 @@ const main = async () => {
 
 const check = async (bot) => {
   const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
-  const users = await userModel.find({}).lean();
+  const users = await userModel
+    .find({
+      discordId: { $exists: true },
+      twitterId: { $exists: true },
+      walletAddress: { $exists: true },
+    })
+    .lean();
   for (let user of users) {
-    if (user.walletAddress && user.discordId && user.twitterId) {
-      const walletAddress = user.walletAddress;
-      const twitterId = user.twitterId;
-
-      try {
-        const discordMember = guild.members.cache.get(user.discordId);
-        await userModel.findOneAndUpdate(
-          { walletAddress },
-          { isDiscordMember: discordMember ? true : false }
-        );
-        const tokenRes = await axios.post(
-          `https://api.twitter.com/oauth2/token?grant_type=client_credentials`,
-          {},
-          {
-            auth: {
-              username: process.env.TWITTER_CONSUMER_KEY,
-              password: process.env.TWITTER_CONSUMER_SECRET,
-            },
-          }
-        );
-        const accessToken = tokenRes.data?.access_token;
-
-        const res = await axios.get(
-          `https://api.twitter.com/2/users/${twitterId}/following?max_results=1000`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        const nextToken = res?.data?.meta?.next_token;
-        const isFollowingFromTwitter =
-          res.data?.data?.filter(
-            (account) =>
-              account.name === process.env.TWITTER_OFFICIAL_CHANNEL_NAME
-          ).length === 1;
-        await userModel.findOneAndUpdate(
-          { walletAddress: user.walletAddress },
-          { isFollowingFromTwitter }
-        );
-        if (nextToken && !isFollowingFromTwitter) {
-          await checkNextPage(accessToken, nextToken, walletAddress, twitterId);
+    const { walletAddress, twitterId, discordId } = user;
+    try {
+      const discordMember = guild.members.cache.get(discordId);
+      await userModel.findOneAndUpdate(
+        { walletAddress },
+        { isDiscordMember: discordMember ? true : false }
+      );
+      const tokenRes = await axios.post(
+        `https://api.twitter.com/oauth2/token?grant_type=client_credentials`,
+        {},
+        {
+          auth: {
+            username: process.env.TWITTER_CONSUMER_KEY,
+            password: process.env.TWITTER_CONSUMER_SECRET,
+          },
         }
-      } catch (e) {
-        sendErrorToLogChannel(bot, "Error on checkIfFollowingSocials", e);
+      );
+      const accessToken = tokenRes.data?.access_token;
+
+      const res = await axios.get(
+        `https://api.twitter.com/2/users/${twitterId}/following?max_results=1000`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      const nextToken = res?.data?.meta?.next_token;
+      const isFollowingFromTwitter =
+        res.data?.data?.filter(
+          (account) =>
+            account.username === process.env.TWITTER_OFFICIAL_CHANNEL_NAME
+        ).length === 1;
+      await userModel.findOneAndUpdate(
+        { walletAddress: user.walletAddress },
+        { isFollowingFromTwitter }
+      );
+      if (nextToken && !isFollowingFromTwitter) {
+        await checkNextPage(accessToken, nextToken, walletAddress, twitterId);
       }
+    } catch (e) {
+      sendErrorToLogChannel(bot, "Error on checkIfFollowingSocials", e);
     }
   }
 };
@@ -102,7 +104,8 @@ const checkNextPage = async (
   await wait(1000);
   const isFollowingFromTwitter =
     res.data?.data?.filter(
-      (account) => account.name === process.env.TWITTER_OFFICIAL_CHANNEL_NAME
+      (account) =>
+        account.username === process.env.TWITTER_OFFICIAL_CHANNEL_USERNAME
     ).length === 1;
   await userModel.findOneAndUpdate(
     { walletAddress },
@@ -111,7 +114,7 @@ const checkNextPage = async (
   if (isFollowingFromTwitter) {
     return;
   }
-  checkNextPage(
+  await checkNextPage(
     accessToken,
     res?.data?.meta?.next_token,
     walletAddress,
