@@ -9,8 +9,6 @@ const mongoose = require("mongoose");
 
 const api = require("./api");
 const oauth = require("./api/oauth");
-const checkIfEligibleForRoles = require("./cron/checkIfEligibleForRoles");
-const checkIfFollowingSocials = require("./cron/checkIfFollowingSocials");
 
 const boot = async () => {
   try {
@@ -35,9 +33,6 @@ const boot = async () => {
 
   app.use("/api", api);
   app.use("/api/oauth", oauth);
-
-  checkIfEligibleForRoles();
-  checkIfFollowingSocials();
 
   // start
   const port = process.env.PORT;

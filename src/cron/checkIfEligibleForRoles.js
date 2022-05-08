@@ -24,13 +24,13 @@ const main = async () => {
   try {
     await bot.login(process.env.DISCORD_BOT_TOKEN);
     await wait(3000);
-    check(bot);
+    checkForAllUsers(bot);
   } catch (e) {
     throw new Error(e);
   }
 };
 
-const check = async (bot) => {
+const checkForAllUsers = async (bot) => {
   const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
   const maniacRole = guild.roles?.cache?.find(
     (r) => r.id === `${process.env.DISCORD_BOT_MANIAC_ROLE_ID}`
@@ -79,6 +79,52 @@ const check = async (bot) => {
     } catch (e) {
       sendErrorToLogChannel(bot, e.response?.data?.message, e);
     }
+  }
+};
+
+const updateStatsForOneUser = async (user) => {
+  const bot = new Discord.Client({
+    intents: [
+      Discord.Intents.FLAGS.GUILDS,
+      Discord.Intents.FLAGS.GUILD_MESSAGES,
+      Discord.Intents.FLAGS.GUILD_MEMBERS,
+      Discord.Intents.FLAGS.GUILD_PRESENCES,
+      Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    ],
+  });
+  try {
+    await bot.login(process.env.DISCORD_BOT_TOKEN);
+    await wait(500);
+  } catch (e) {
+    throw new Error(e);
+  }
+  const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
+  const { walletAddress } = user;
+  const discordMember = guild.members.cache.get(user.discordId);
+  let teamMember = discordMember?._roles.filter(
+    (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
+  );
+  if (teamMember) {
+    return;
+  }
+  try {
+    const res = await axios.get(
+      `${process.env.MORALIS_API_URL}/${walletAddress}/nft/${process.env.NFT_CONTRACT_ADDRESS}/?chain=${process.env.NFT_CHAIN}&format=decimal`,
+      {
+        headers: {
+          "x-api-key": process.env.MORALIS_WEB3_API_KEY,
+        },
+      }
+    );
+    const result = res.data?.result;
+    if (result) {
+      await userModel.findOneAndUpdate(
+        { walletAddress },
+        { ownedNFTCount: result.length }
+      );
+    }
+  } catch (e) {
+    sendErrorToLogChannel(bot, e.response?.data?.message, e);
   }
 };
 
@@ -132,4 +178,4 @@ const checkIfRareX = async (result, discordMember, rarexRole) => {
   }
 };
 
-module.exports = checkIfEligibleForRoles;
+module.exports = { checkIfEligibleForRoles, updateStatsForOneUser };

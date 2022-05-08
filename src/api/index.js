@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
 const { authenticateUser } = require("./middleware");
+const checkIfEligibleForRoles = require("../cron/checkIfEligibleForRoles");
+const checkIfFollowingSocials = require("../cron/checkIfFollowingSocials");
 
 const signJwt = (user) => {
   const token = jwt.sign(user, process.env.JWT_SECRET, {
@@ -76,14 +78,21 @@ router.get("/logout", authenticateUser, async (req, res) => {
 
 router.get("/user", authenticateUser, async (req, res) => {
   const walletAddress = req?.walletAddress;
-  const user = await userModel.findOne({ walletAddress }).lean();
-  res.json({
-    discordName: user.discordName,
-    twitterName: user.twitterName,
-    isFollowingFromTwitter: user.isFollowingFromTwitter,
-    isDiscordMember: user.isDiscordMember,
-    ownedNFTCount: user.ownedNFTCount,
-  });
+  try {
+    let user = await userModel.findOne({ walletAddress }).lean();
+    await checkIfEligibleForRoles.updateStatsForOneUser(user);
+    await checkIfFollowingSocials.updateStatsForOneUser(user);
+    user = await userModel.findOne({ walletAddress }).lean();
+    res.json({
+      discordName: user.discordName,
+      twitterName: user.twitterName,
+      isFollowingFromTwitter: user.isFollowingFromTwitter,
+      isDiscordMember: user.isDiscordMember,
+      ownedNFTCount: user.ownedNFTCount,
+    });
+  } catch (e) {
+    res.status(500).send("Something went wrong");
+  }
 });
 
 module.exports = router;
