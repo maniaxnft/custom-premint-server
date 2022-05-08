@@ -82,6 +82,7 @@ router.get("/user", authenticateUser, async (req, res) => {
     twitterName: user.twitterName,
     isFollowingFromTwitter: user.isFollowingFromTwitter,
     isDiscordMember: user.isDiscordMember,
+    ownedNFTCount: user.ownedNFTCount,
   });
 });
 

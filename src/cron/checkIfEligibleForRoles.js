@@ -42,8 +42,13 @@ const check = async (bot) => {
     (r) => r.id === `${process.env.DISCORD_BOT_RAREX_ROLE_ID}`
   );
 
-  const users = await userModel.find({}).lean();
+  const users = await userModel.find({
+    discordId: { $exists: true },
+    twitterId: { $exists: true },
+    walletAddress: { $exists: true },
+  });
   for (let user of users) {
+    const { walletAddress } = user;
     const discordMember = guild.members.cache.get(user.discordId);
     let teamMember = discordMember?._roles.filter(
       (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
@@ -51,25 +56,28 @@ const check = async (bot) => {
     if (teamMember) {
       return;
     }
-    if (user.walletAddress && user.discordId && user.twitterId) {
-      try {
-        const res = await axios.get(
-          `${process.env.MORALIS_API_URL}/${user.walletAddress}/nft/${process.env.NFT_CONTRACT_ADDRESS}/?chain=${process.env.NFT_CHAIN}&format=decimal`,
-          {
-            headers: {
-              "x-api-key": process.env.MORALIS_WEB3_API_KEY,
-            },
-          }
+    try {
+      const res = await axios.get(
+        `${process.env.MORALIS_API_URL}/${walletAddress}/nft/${process.env.NFT_CONTRACT_ADDRESS}/?chain=${process.env.NFT_CHAIN}&format=decimal`,
+        {
+          headers: {
+            "x-api-key": process.env.MORALIS_WEB3_API_KEY,
+          },
+        }
+      );
+      const result = res.data?.result;
+      if (result) {
+        await userModel.findOneAndUpdate(
+          { walletAddress },
+          { ownedNFTCount: result.length }
         );
-        const result = res.data?.result;
-
-        checkIfManiac(result, discordMember, maniacRole);
-        checkIfManiax(result, discordMember, maniaxRole);
-        await checkIfRareX(result, discordMember, rarexRole);
-        wait(1000);
-      } catch (e) {
-        sendErrorToLogChannel(bot, e.response?.data?.message, e);
       }
+      checkIfManiac(result, discordMember, maniacRole);
+      checkIfManiax(result, discordMember, maniaxRole);
+      await checkIfRareX(result, discordMember, rarexRole);
+      wait(1000);
+    } catch (e) {
+      sendErrorToLogChannel(bot, e.response?.data?.message, e);
     }
   }
 };

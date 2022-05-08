@@ -25,6 +25,9 @@ const userSchema = mongoose.Schema({
   isDiscordMember: {
     type: Boolean,
   },
+  ownedNFTCount: {
+    type: Number,
+  },
 });
 
 const userModel = mongoose.model("user", userSchema);
