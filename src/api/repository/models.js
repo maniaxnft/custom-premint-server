@@ -19,6 +19,12 @@ const userSchema = mongoose.Schema({
   twitterName: {
     type: String,
   },
+  isFollowingFromTwitter: {
+    type: Boolean,
+  },
+  isDiscordMember: {
+    type: Boolean,
+  },
 });
 
 const userModel = mongoose.model("user", userSchema);

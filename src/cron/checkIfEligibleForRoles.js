@@ -41,7 +41,6 @@ const check = async (bot) => {
   const rarexRole = guild.roles?.cache?.find(
     (r) => r.id === `${process.env.DISCORD_BOT_RAREX_ROLE_ID}`
   );
-  sendErrorToLogChannel(bot, "Role cron started");
 
   const users = await userModel.find({}).lean();
   for (let user of users) {
