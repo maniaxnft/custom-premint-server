@@ -80,6 +80,8 @@ router.get("/user", authenticateUser, async (req, res) => {
   res.json({
     discordName: user.discordName,
     twitterName: user.twitterName,
+    isFollowingFromTwitter: user.isFollowingFromTwitter,
+    isDiscordMember: user.isDiscordMember,
   });
 });
 
