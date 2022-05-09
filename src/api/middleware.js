@@ -1,3 +1,4 @@
+const axios = require("axios");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
@@ -32,6 +33,23 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
+const checkCaptcha = async (req, res, next) => {
+  const captchaToken = req.body?.captchaToken;
+  try {
+    const res = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${captchaToken}`
+    );
+    if (res.data?.success) {
+      next();
+    } else {
+      res.status(401).send("Unauthenticated");
+    }
+  } catch (e) {
+    res.status(500).send("Something went wrong");
+  }
+};
+
 module.exports = {
   authenticateUser,
+  checkCaptcha,
 };

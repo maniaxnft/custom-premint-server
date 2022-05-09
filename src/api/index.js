@@ -6,7 +6,7 @@ const { ethers } = require("ethers");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
-const { authenticateUser } = require("./middleware");
+const { authenticateUser, checkCaptcha } = require("./middleware");
 
 const signJwt = (user) => {
   const token = jwt.sign(user, process.env.JWT_SECRET, {
@@ -15,7 +15,7 @@ const signJwt = (user) => {
   return token;
 };
 
-router.post("/nonce", async (req, res) => {
+router.post("/nonce", checkCaptcha, async (req, res) => {
   const nonce = generateNonce();
   const walletAddress = req.body.walletAddress;
 

@@ -5,7 +5,7 @@ const axios = require("axios");
 const { TwitterApi } = require("twitter-api-v2");
 
 const userModel = require("../repository/models");
-const { authenticateUser } = require("../middleware");
+const { authenticateUser, checkCaptcha } = require("../middleware");
 const twitterCallbackModel = require("./model");
 
 router.post("/discord", authenticateUser, async (req, res) => {
@@ -55,33 +55,38 @@ router.post("/discord", authenticateUser, async (req, res) => {
   }
 });
 
-router.get("/twitter/request_token", authenticateUser, async (req, res) => {
-  const walletAddress = req.walletAddress;
-  const client = new TwitterApi({
-    appKey: process.env.TWITTER_CONSUMER_KEY,
-    appSecret: process.env.TWITTER_CONSUMER_SECRET,
-  });
+router.post(
+  "/twitter/request_token",
+  authenticateUser,
+  checkCaptcha,
+  async (req, res) => {
+    const walletAddress = req.walletAddress;
+    const client = new TwitterApi({
+      appKey: process.env.TWITTER_CONSUMER_KEY,
+      appSecret: process.env.TWITTER_CONSUMER_SECRET,
+    });
 
-  try {
-    const response = await client.generateAuthLink(
-      process.env.TWITTER_CALLBACK_URL
-    );
-    const oauthToken = response?.oauth_token;
-    const oauthTokenSecret = response?.oauth_token_secret;
-    if (oauthToken && oauthTokenSecret) {
-      await twitterCallbackModel.create({
-        walletAddress,
-        oauthToken,
-        oauthTokenSecret,
-      });
-      res.send(response.oauth_token);
-    } else {
+    try {
+      const response = await client.generateAuthLink(
+        process.env.TWITTER_CALLBACK_URL
+      );
+      const oauthToken = response?.oauth_token;
+      const oauthTokenSecret = response?.oauth_token_secret;
+      if (oauthToken && oauthTokenSecret) {
+        await twitterCallbackModel.create({
+          walletAddress,
+          oauthToken,
+          oauthTokenSecret,
+        });
+        res.send(response.oauth_token);
+      } else {
+        res.status(500);
+      }
+    } catch (e) {
       res.status(500);
     }
-  } catch (e) {
-    res.status(500);
   }
-});
+);
 
 router.get("/twitter/callback", authenticateUser, async (req, res) => {
   const oauth_token = req.query?.oauth_token;
