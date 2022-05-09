@@ -8,7 +8,7 @@ const userModel = require("../repository/models");
 const { authenticateUser, checkCaptcha } = require("../middleware");
 const twitterCallbackModel = require("./model");
 
-router.post("/discord", authenticateUser, async (req, res) => {
+router.post("/discord", authenticateUser, checkCaptcha, async (req, res) => {
   const walletAddress = req.walletAddress;
   const code = req.body?.code;
   if (code) {
