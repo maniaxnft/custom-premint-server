@@ -3,8 +3,10 @@ const sendErrorToLogChannel = async (bot, message, e) => {
     const channel = await bot.channels?.cache?.get(
       process.env.DISCORD_BOT_INFO_CHANNEL_ID
     );
-    if (e?.message && channel) {
-      channel.send(`${message}, error message: ${e?.message}`);
+    if (e?.response?.data && channel) {
+      channel.send(`${message}, error message: ${e.response.data}`);
+    } else if (e?.message && channel) {
+      channel.send(`${message}, error message: ${e.message}`);
     } else if (!e?.message && channel) {
       channel.send(`${message}`);
     }

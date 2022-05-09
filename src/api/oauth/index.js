@@ -7,6 +7,7 @@ const { TwitterApi } = require("twitter-api-v2");
 const userModel = require("../repository/models");
 const { authenticateUser, checkCaptcha } = require("../middleware");
 const twitterCallbackModel = require("./model");
+const { checkIfFollowingTwitter, checkIfDiscordMember } = require("./services");
 
 router.post("/discord", authenticateUser, checkCaptcha, async (req, res) => {
   const walletAddress = req.walletAddress;
@@ -36,13 +37,15 @@ router.post("/discord", authenticateUser, checkCaptcha, async (req, res) => {
         }
       );
       if (userResponse.data?.username && userResponse.data?.id) {
-        await userModel.findOneAndUpdate(
+        const user = await userModel.findOneAndUpdate(
           { walletAddress },
           {
             discordId: userResponse.data?.id,
             discordName: userResponse.data?.username,
-          }
+          },
+          { new: true }
         );
+        await checkIfDiscordMember(user);
         res.send(userResponse.data?.username);
       } else {
         res.status(500);
@@ -113,13 +116,15 @@ router.get("/twitter/callback", authenticateUser, async (req, res) => {
       try {
         const user = await client.login(oauth_verifier);
         if (user.userId && user.screenName) {
-          await userModel.findOneAndUpdate(
+          const userInDb = await userModel.findOneAndUpdate(
             { walletAddress: twitterCallback.walletAddress },
             {
               twitterId: user.userId,
               twitterName: user.screenName,
-            }
+            },
+            { new: true }
           );
+          await checkIfFollowingTwitter(userInDb);
           await twitterCallbackModel.deleteOne({
             oauthToken: oauth_token,
           });
@@ -155,7 +160,7 @@ router.get("/twitter/callback", authenticateUser, async (req, res) => {
       }
     );
   } finally {
-    res.redirect(`${process.env.CLIENT_URL}/twitter-result`);
+    res.redirect(`${process.env.CLIENT_URL}?twitter_result=done`);
   }
 });
 
