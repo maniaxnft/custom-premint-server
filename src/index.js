@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-require("dotenv").config();
+require("dotenv-safe").config();
 
 const express = require("express");
 const cookieParser = require("cookie-parser");
