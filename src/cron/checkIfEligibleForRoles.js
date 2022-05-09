@@ -74,7 +74,8 @@ const checkForAllUsers = async (bot) => {
       }
       checkIfManiac(result, discordMember, maniacRole);
       checkIfManiax(result, discordMember, maniaxRole);
-      await checkIfRareX(result, discordMember, rarexRole);
+      const hasRare = await checkIfRareX(result, discordMember, rarexRole);
+      await userModel.findOneAndUpdate({ walletAddress }, { hasRare });
       wait(1000);
     } catch (e) {
       sendErrorToLogChannel(bot, e.response?.data?.message, e);
@@ -176,6 +177,7 @@ const checkIfRareX = async (result, discordMember, rarexRole) => {
   } else {
     discordMember.roles.remove(rarexRole);
   }
+  return hasRare;
 };
 
 module.exports = { checkIfEligibleForRoles, updateStatsForOneUser };

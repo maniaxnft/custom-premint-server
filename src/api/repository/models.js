@@ -28,6 +28,9 @@ const userSchema = mongoose.Schema({
   ownedNFTCount: {
     type: Number,
   },
+  hasRare: {
+    type: Boolean,
+  },
 });
 
 const userModel = mongoose.model("user", userSchema);

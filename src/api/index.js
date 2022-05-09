@@ -7,8 +7,6 @@ const jwt = require("jsonwebtoken");
 
 const userModel = require("./repository/models");
 const { authenticateUser } = require("./middleware");
-const checkIfEligibleForRoles = require("../cron/checkIfEligibleForRoles");
-const checkIfFollowingSocials = require("../cron/checkIfFollowingSocials");
 
 const signJwt = (user) => {
   const token = jwt.sign(user, process.env.JWT_SECRET, {
@@ -80,8 +78,6 @@ router.get("/user", authenticateUser, async (req, res) => {
   const walletAddress = req?.walletAddress;
   try {
     let user = await userModel.findOne({ walletAddress }).lean();
-    await checkIfEligibleForRoles.updateStatsForOneUser(user);
-    await checkIfFollowingSocials.updateStatsForOneUser(user);
     user = await userModel.findOne({ walletAddress }).lean();
     res.json({
       discordName: user.discordName,
@@ -89,6 +85,7 @@ router.get("/user", authenticateUser, async (req, res) => {
       isFollowingFromTwitter: user.isFollowingFromTwitter,
       isDiscordMember: user.isDiscordMember,
       ownedNFTCount: user.ownedNFTCount,
+      hasRare: user.hasRare,
     });
   } catch (e) {
     res.status(500).send("Something went wrong");
