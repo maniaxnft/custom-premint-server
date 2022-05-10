@@ -1,4 +1,4 @@
-# custom-premint
+# Custom Premint Server
 
 Custom Premint is an app where users connect their Metamask, Discord and Twitter to get special roles in relative Discord server.
 There is already Premint existing but this app allows you to customize it, add special roles based on what logic you want.
