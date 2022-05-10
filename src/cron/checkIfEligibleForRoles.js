@@ -24,9 +24,9 @@ const main = async () => {
   try {
     await bot.login(process.env.DISCORD_BOT_TOKEN);
     await wait(3000);
-    checkForAllUsers(bot);
+    await checkForAllUsers(bot);
   } catch (e) {
-    throw new Error(e);
+    sendErrorToLogChannel(bot, "checkIfEligibleForRolesError", e);
   }
 };
 
@@ -48,8 +48,8 @@ const checkForAllUsers = async (bot) => {
     walletAddress: { $exists: true },
   });
   for (let user of users) {
-    const { walletAddress } = user;
-    const guildMember = guild.members.cache.get(user.discordId);
+    const { walletAddress, discordId } = user;
+    const guildMember = guild.members.cache.get(discordId);
 
     let teamMember = guildMember?._roles.filter(
       (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
@@ -59,8 +59,10 @@ const checkForAllUsers = async (bot) => {
     );
 
     if (teamMember || !verified) {
+      // Do nothing if not verified or already team
       return;
     }
+
     try {
       const res = await axios.get(
         `${process.env.MORALIS_API_URL}/${walletAddress}/nft/${process.env.NFT_CONTRACT_ADDRESS}/?chain=${process.env.NFT_CHAIN}&format=decimal`,

@@ -24,8 +24,9 @@ const main = async () => {
   try {
     await bot.login(process.env.DISCORD_BOT_TOKEN);
     await wait(3000);
-    check(bot);
+    await check(bot);
   } catch (e) {
+    sendErrorToLogChannel(bot, "checkIfFollowingSocialsError", e);
     throw new Error(e);
   }
 };
@@ -76,6 +77,7 @@ const check = async (bot) => {
         { walletAddress: user.walletAddress },
         { isFollowingFromTwitter }
       );
+      await wait(1000);
       if (nextToken && !isFollowingFromTwitter) {
         await checkNextPage(accessToken, nextToken, walletAddress, twitterId);
       }
