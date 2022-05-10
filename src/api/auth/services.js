@@ -20,7 +20,6 @@ const checkNftCount = async (walletAddress) => {
       );
     }
   } catch (e) {
-    console.log(e.response?.data);
     throw new Error(e);
   }
 };

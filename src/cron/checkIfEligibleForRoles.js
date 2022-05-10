@@ -53,7 +53,10 @@ const checkForAllUsers = async (bot) => {
     let teamMember = discordMember?._roles.filter(
       (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
     );
-    if (teamMember) {
+    let verified = discordMember?._roles.filter(
+      (roleId) => roleId === process.env.DISCORD_BOT_VERIFIED_ROLE_ID
+    );
+    if (teamMember || !verified) {
       return;
     }
     try {
@@ -72,10 +75,16 @@ const checkForAllUsers = async (bot) => {
           { ownedNFTCount: result.length }
         );
       }
-      checkIfManiac(result, discordMember, maniacRole);
-      checkIfManiax(result, discordMember, maniaxRole);
-      const hasRare = await checkIfRareX(result, discordMember, rarexRole);
+      const hasRare = await checkIfRareX({
+        bot,
+        result,
+        discordMember,
+        rarexRole,
+      });
       await userModel.findOneAndUpdate({ walletAddress }, { hasRare });
+      checkIfManiac({ bot, result, discordMember, maniacRole });
+      checkIfManiax({ bot, result, discordMember, maniaxRole });
+
       wait(1000);
     } catch (e) {
       sendErrorToLogChannel(bot, e.response?.data?.message, e);
@@ -83,25 +92,56 @@ const checkForAllUsers = async (bot) => {
   }
 };
 
-const checkIfManiac = (result, discordMember, maniacRole) => {
-  if (result.length === 0) {
+const checkIfManiac = ({ bot, result, discordMember, maniacRole }) => {
+  let isManiac = discordMember?._roles.filter(
+    (roleId) => roleId === process.env.DISCORD_BOT_MANIAC_ROLE_ID
+  );
+  if (result.length === 0 && isManiac) {
     discordMember.roles.remove(maniacRole);
+    sendInfoMessageToUser({
+      bot,
+      discordMember,
+      message:
+        "Your Maniac role has been withdrawn since we cannot find a Maniax NFT in your wallet.",
+    });
   }
-  if (result.length === 1) {
+  if (result.length >= 1 && !isManiac) {
     discordMember.roles.add(maniacRole);
+    sendInfoMessageToUser({
+      bot,
+      discordMember,
+      message: "You have been promoted with Maniac Role!",
+    });
   }
 };
 
-const checkIfManiax = (result, discordMember, maniaxRole) => {
-  if (result.length < 5) {
+const checkIfManiax = ({ bot, result, discordMember, maniaxRole }) => {
+  let isManiax = discordMember?._roles.filter(
+    (roleId) => roleId === process.env.DISCORD_BOT_MANIAX_ROLE_ID
+  );
+  if (result.length < 5 && isManiax) {
     discordMember.roles.remove(maniaxRole);
+    sendInfoMessageToUser({
+      bot,
+      discordMember,
+      message:
+        "Your ManiaX role has been withdrawn since you have less than 5 Maniax NFT",
+    });
   }
-  if (result.length >= 5) {
+  if (result.length >= 5 && !isManiax) {
     discordMember.roles.add(maniaxRole);
+    sendInfoMessageToUser({
+      bot,
+      discordMember,
+      message: "You have been promoted with ManiaX Role!",
+    });
   }
 };
 
-const checkIfRareX = async (result, discordMember, rarexRole) => {
+const checkIfRareX = async ({ bot, result, discordMember, rarexRole }) => {
+  let isRareX = discordMember?._roles.filter(
+    (roleId) => roleId === process.env.DISCORD_BOT_RAREX_ROLE_ID
+  );
   if (result.length === 0) {
     discordMember.roles.remove(rarexRole);
     return;
@@ -126,12 +166,32 @@ const checkIfRareX = async (result, discordMember, rarexRole) => {
       break;
     }
   }
-  if (hasRare) {
+  if (hasRare && !isRareX) {
     discordMember.roles.add(rarexRole);
-  } else {
+    sendInfoMessageToUser({
+      bot,
+      discordMember,
+      message: "You have been promoted with RareX Role!",
+    });
+  }
+  if (!hasRare && isRareX) {
     discordMember.roles.remove(rarexRole);
+    sendInfoMessageToUser({
+      bot,
+      discordMember,
+      message:
+        "Your RareX role has been withdrawn since we cannot find a Rare NFT",
+    });
   }
   return hasRare;
+};
+
+const sendInfoMessageToUser = ({ bot, user, message }) => {
+  try {
+    user.send(message);
+  } catch (err) {
+    sendErrorToLogChannel(bot, "sendInfoMessageToUser", err);
+  }
 };
 
 module.exports = checkIfEligibleForRoles;
