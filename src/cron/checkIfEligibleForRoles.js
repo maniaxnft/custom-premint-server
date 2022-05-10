@@ -180,7 +180,7 @@ const checkIfRareX = async ({ bot, result, discordMember, rarexRole }) => {
       bot,
       discordMember,
       message:
-        "Your RareX role has been withdrawn since we cannot find a Rare NFT",
+        "Your RareX role has been withdrawn since we cannot find a Rare NFT in your wallet.",
     });
   }
   return hasRare;
