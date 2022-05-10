@@ -7,7 +7,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const api = require("./api");
+const api = require("./api/auth");
 const oauth = require("./api/oauth");
 
 const checkIfFollowingSocials = require("./cron/checkIfFollowingSocials");

@@ -2,7 +2,7 @@ const axios = require("axios");
 const Discord = require("discord.js");
 const cron = require("node-cron");
 
-const userModel = require("../api/repository/models");
+const userModel = require("../api/auth/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
 const checkIfFollowingSocials = () => {

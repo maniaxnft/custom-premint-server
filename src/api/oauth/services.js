@@ -2,7 +2,7 @@ const axios = require("axios");
 const Discord = require("discord.js");
 
 const { wait, sendErrorToLogChannel } = require("../../utils");
-const userModel = require("../repository/models");
+const userModel = require("../auth/models");
 
 const checkIfFollowingTwitter = async (user) => {
   const walletAddress = user.walletAddress;

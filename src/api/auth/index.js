@@ -5,8 +5,9 @@ const { generateNonce } = require("siwe");
 const { ethers } = require("ethers");
 const jwt = require("jsonwebtoken");
 
-const userModel = require("./repository/models");
-const { authenticateUser, checkCaptcha } = require("./middleware");
+const userModel = require("./models");
+const { authenticateUser, checkCaptcha } = require("../middleware");
+const { checkNftCount } = require("./services");
 
 const signJwt = (user) => {
   const token = jwt.sign(user, process.env.JWT_SECRET, {
@@ -47,6 +48,7 @@ router.post("/validate_signature", async (req, res) => {
     if (!user) {
       throw new Error("User not found");
     }
+    checkNftCount(walletAddress);
     // set jwt to the user's browser cookies
     const token = signJwt(user);
     const secure = process.env.NODE_ENV !== "development";

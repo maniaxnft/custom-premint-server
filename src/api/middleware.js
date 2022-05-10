@@ -1,7 +1,7 @@
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
 
-const userModel = require("./repository/models");
+const userModel = require("./auth/models");
 
 const verifyJwtAndReturnUser = (token) => {
   try {

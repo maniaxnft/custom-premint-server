@@ -4,7 +4,7 @@ const router = express.Router();
 const axios = require("axios");
 const { TwitterApi } = require("twitter-api-v2");
 
-const userModel = require("../repository/models");
+const userModel = require("../auth/models");
 const { authenticateUser, checkCaptcha } = require("../middleware");
 const twitterCallbackModel = require("./model");
 const { checkIfFollowingTwitter, checkIfDiscordMember } = require("./services");
