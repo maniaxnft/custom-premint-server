@@ -12,6 +12,7 @@ const oauth = require("./api/oauth");
 
 const checkIfFollowingSocials = require("./cron/checkIfFollowingSocials");
 const checkIfEligibleForRoles = require("./cron/checkIfEligibleForRoles");
+const updateUserInfo = require("./cron/updateUserInfo");
 
 const boot = async () => {
   try {
@@ -37,14 +38,19 @@ const boot = async () => {
   app.use("/api", api);
   app.use("/api/oauth", oauth);
 
-  checkIfFollowingSocials();
-  checkIfEligibleForRoles();
+  initCrons();
 
   // start
   const port = process.env.PORT;
   app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
   });
+};
+
+const initCrons = () => {
+  checkIfFollowingSocials();
+  checkIfEligibleForRoles();
+  updateUserInfo();
 };
 
 boot();
