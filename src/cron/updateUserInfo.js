@@ -6,7 +6,6 @@ const userModel = require("../api/auth/models");
 const { wait } = require("../utils");
 
 const updateUserInfo = () => {
-  main();
   cron.schedule("*/30 * * * *", () => {
     main();
   });
