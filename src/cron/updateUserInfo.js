@@ -33,6 +33,7 @@ const main = async () => {
             { twitterName }
           );
         }
+        await wait(1000);
       }
 
       if (user.discordId) {
