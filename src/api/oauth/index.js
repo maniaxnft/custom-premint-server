@@ -7,7 +7,10 @@ const { TwitterApi } = require("twitter-api-v2");
 const userModel = require("../auth/models");
 const { authenticateUser, checkCaptcha } = require("../middleware");
 const twitterCallbackModel = require("./model");
-const { checkIfFollowingTwitter, checkIfDiscordMember } = require("./services");
+const {
+  checkIfFollowingTwitter,
+  checkIfDiscordMemberAndVerified,
+} = require("./services");
 
 router.post("/discord", authenticateUser, checkCaptcha, async (req, res) => {
   const walletAddress = req.walletAddress;
@@ -45,7 +48,7 @@ router.post("/discord", authenticateUser, checkCaptcha, async (req, res) => {
           },
           { new: true }
         );
-        await checkIfDiscordMember(user);
+        await checkIfDiscordMemberAndVerified(user);
         res.send(userResponse.data?.username);
       } else {
         res.status(500);

@@ -77,7 +77,7 @@ const checkNextPage = async (
   );
 };
 
-const checkIfDiscordMember = async (user) => {
+const checkIfDiscordMemberAndVerified = async (user) => {
   const walletAddress = user.walletAddress;
   const discordId = user.discordId;
   if (walletAddress && discordId) {
@@ -95,16 +95,22 @@ const checkIfDiscordMember = async (user) => {
       await bot.login(process.env.DISCORD_BOT_TOKEN);
       await wait(500);
       const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
-
       const discordMember = guild.members.cache.get(discordId);
-      await userModel.findOneAndUpdate(
-        { walletAddress },
-        { isDiscordMember: discordMember ? true : false }
+
+      let verified = discordMember?._roles.filter(
+        (roleId) => roleId === process.env.DISCORD_BOT_VERIFIED_ROLE_ID
       );
+
+      if (verified) {
+        await userModel.findOneAndUpdate(
+          { walletAddress },
+          { isDiscordMember: discordMember ? true : false }
+        );
+      }
     } catch (e) {
       sendErrorToLogChannel(bot, "Error on checkIfFollowingSocials", e);
     }
   }
 };
 
-module.exports = { checkIfFollowingTwitter, checkIfDiscordMember };
+module.exports = { checkIfFollowingTwitter, checkIfDiscordMemberAndVerified };
