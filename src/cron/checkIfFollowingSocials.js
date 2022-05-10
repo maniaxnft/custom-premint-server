@@ -108,7 +108,7 @@ const checkNextPage = async (
     { walletAddress },
     { isFollowingFromTwitter }
   );
-  if (isFollowingFromTwitter || !res?.data?.meta?.next_token) {
+  if (isFollowingFromTwitter || !res.data?.meta?.next_token) {
     return;
   }
   await checkNextPage(
