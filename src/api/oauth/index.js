@@ -51,13 +51,13 @@ router.post("/discord", authenticateUser, checkCaptcha, async (req, res) => {
         await checkIfDiscordMemberAndVerified(user);
         res.send(userResponse.data?.username);
       } else {
-        res.status(500);
+        res.status(500).send("Something went wrong");
       }
     } catch (e) {
-      res.status(400);
+      res.status(400).send("Something went wrong");
     }
   } else {
-    res.status(401);
+    res.status(401).send("Something went wrong");
   }
 });
 
@@ -86,28 +86,25 @@ router.post(
         });
         res.send(response.oauth_token);
       } else {
-        res.status(500);
+        res.status(500).send("Something went wrong");
       }
     } catch (e) {
-      res.status(500);
+      res.status(500).send("Something went wrong");
     }
   }
 );
 
 router.get("/twitter/callback", authenticateUser, async (req, res) => {
   const oauth_token = req.query?.oauth_token;
+  const oauth_verifier = req.query?.oauth_verifier;
+  let error = "";
+
   const twitterCallback = await twitterCallbackModel
     .findOne({
       oauthToken: oauth_token,
     })
     .lean();
   try {
-    const oauth_verifier = req.query?.oauth_verifier;
-    const twitterCallback = await twitterCallbackModel
-      .findOne({
-        oauthToken: oauth_token,
-      })
-      .lean();
     const oauthTokenSecret = twitterCallback?.oauthTokenSecret;
     if (oauthTokenSecret && oauth_token && oauth_verifier) {
       const client = new TwitterApi({
@@ -116,54 +113,38 @@ router.get("/twitter/callback", authenticateUser, async (req, res) => {
         accessToken: oauth_token,
         accessSecret: oauthTokenSecret,
       });
-      try {
-        const user = await client.login(oauth_verifier);
-        if (user.userId && user.screenName) {
-          const userInDb = await userModel.findOneAndUpdate(
-            { walletAddress: twitterCallback.walletAddress },
-            {
-              twitterId: user.userId,
-              twitterName: user.screenName,
-            },
-            { new: true }
-          );
-          await checkIfFollowingTwitter(userInDb);
-          await twitterCallbackModel.deleteOne({
-            oauthToken: oauth_token,
-          });
-        } else {
-          await twitterCallbackModel.findOneAndUpdate(
-            { walletAddress: twitterCallback.walletAddress },
-            {
-              error: "Something went wrong",
-            }
-          );
-        }
-      } catch (e) {
-        await twitterCallbackModel.findOneAndUpdate(
+      const user = await client.login(oauth_verifier);
+      if (user.userId && user.screenName) {
+        const userInDb = await userModel.findOneAndUpdate(
           { walletAddress: twitterCallback.walletAddress },
           {
-            error: "Invalid verifier or access tokens",
-          }
+            twitterId: user.userId,
+            twitterName: user.screenName,
+          },
+          { new: true }
         );
+        await checkIfFollowingTwitter(userInDb);
+        await twitterCallbackModel.deleteOne({
+          oauthToken: oauth_token,
+        });
+      } else {
+        error = "Cannot find the Twitter user";
       }
     } else {
+      error = "You denied the app or your session expired";
+    }
+  } catch (e) {
+    error = "Something went wrong";
+  } finally {
+    if (error) {
       await twitterCallbackModel.findOneAndUpdate(
-        { walletAddress: twitterCallback.walletAddress },
+        { walletAddress: twitterCallback?.walletAddress },
         {
-          error: "You denied the app or your session expired",
+          error,
         }
       );
     }
-  } catch (e) {
-    await twitterCallbackModel.findOneAndUpdate(
-      { walletAddress: twitterCallback?.walletAddress },
-      {
-        error: "Something went wrong",
-      }
-    );
-  } finally {
-    res.redirect(`${process.env.CLIENT_URL}?twitter_result=done`);
+    res.redirect(`${process.env.CLIENT_URL}?twitter_callback=check`);
   }
 });
 
@@ -174,19 +155,15 @@ router.get("/twitter/check", authenticateUser, async (req, res) => {
     const twitterCallback = await twitterCallbackModel.findOne({
       walletAddress,
     });
-    if (!twitterCallback) {
-      res.status(200);
-    }
-    if (twitterCallback?.error) {
+    if (!twitterCallback && user.twitterName && user.twitterId) {
+      res.status(200).send("success");
+    } else if (twitterCallback?.error) {
       res.status(400).send(twitterCallback?.error);
-    }
-    if (user.twitterName && user.twitterId) {
-      res.send(user.twitterName);
     } else {
-      res.status(400);
+      res.status(400).send("Something went wrong");
     }
   } catch (e) {
-    res.status(500);
+    res.status(500).send("Something went wrong");
   }
 });
 
