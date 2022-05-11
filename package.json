@@ -4,30 +4,31 @@
   "private": true,
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "upgrade": "yarn yarn-upgrade-all"
   },
   "dependencies": {
     "axios": "^0.27.2",
     "body-parser": "^1.20.0",
-    "cookie-parser": "~1.4.4",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "debug": "~2.6.9",
+    "debug": "^4.3.4",
     "discord.js": "^13.6.0",
     "dotenv-safe": "^8.2.0",
     "ethers": "^5.6.5",
-    "express": "~4.16.1",
+    "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongodb": "^4.5.0",
-    "mongoose": "^6.3.2",
+    "mongoose": "^6.3.3",
     "node-cron": "^3.0.0",
     "nodemon": "^2.0.16",
     "nonce": "^1.0.4",
     "oauth": "^0.9.15",
     "oauth-1.0a": "^2.2.6",
     "oauth-signature": "^1.5.0",
-    "siwe": "^1.1.6",
+    "siwe": "^2.0.2",
     "twitter-api-v2": "^1.12.0"
   },
   "engines": {
@@ -35,6 +36,7 @@
     "yarn": "1.22.18"
   },
   "devDependencies": {
-    "eslint": "^8.14.0"
+    "eslint": "^8.15.0",
+    "yarn-upgrade-all": "^0.7.1"
   }
 }
