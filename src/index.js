@@ -9,10 +9,7 @@ const mongoose = require("mongoose");
 
 const api = require("./api/auth");
 const oauth = require("./api/oauth");
-
-const checkIfFollowingSocials = require("./cron/checkIfFollowingSocials");
-const checkIfEligibleForRoles = require("./cron/checkIfEligibleForRoles");
-const updateUserInfo = require("./cron/updateUserInfo");
+const initCrons = require("./cron");
 
 const boot = async () => {
   try {
@@ -45,12 +42,6 @@ const boot = async () => {
   app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);
   });
-};
-
-const initCrons = () => {
-  checkIfFollowingSocials();
-  checkIfEligibleForRoles();
-  updateUserInfo();
 };
 
 boot();
