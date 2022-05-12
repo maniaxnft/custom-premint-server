@@ -155,7 +155,12 @@ router.get("/twitter/check", authenticateUser, async (req, res) => {
     const twitterCallback = await twitterCallbackModel.findOne({
       walletAddress,
     });
-    if (!twitterCallback && user.twitterName && user.twitterId) {
+    if (twitterCallback && user.twitterName && user.twitterId) {
+      await twitterCallbackModel.deleteOne({
+        walletAddress,
+      });
+      res.status(200).send("success");
+    } else if (!twitterCallback && user.twitterName && user.twitterId) {
       res.status(200).send("success");
     } else if (twitterCallback?.error) {
       res.status(400).send(twitterCallback?.error);
