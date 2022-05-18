@@ -3,7 +3,11 @@ const Discord = require("discord.js");
 const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
-const { sendErrorToLogChannel, wait } = require("../utils");
+const {
+  sendErrorToLogChannel,
+  wait,
+  sendInfoMessageToUser,
+} = require("../utils");
 
 const checkIfEligibleForRoles = () => {
   cron.schedule("*/30 * * * *", () => {
@@ -188,17 +192,6 @@ const checkIfRareX = async ({ bot, result, guildMember, rarexRole }) => {
     });
   }
   return hasRare;
-};
-
-const sendInfoMessageToUser = async ({ bot, message }) => {
-  try {
-    const channel = await bot.channels?.cache?.get(
-      process.env.DISCORD_BOT_LEVELUP_CHANNEL_ID
-    );
-    channel.send(message);
-  } catch (err) {
-    sendErrorToLogChannel(bot, "sendInfoMessageToUser", err);
-  }
 };
 
 module.exports = checkIfEligibleForRoles;

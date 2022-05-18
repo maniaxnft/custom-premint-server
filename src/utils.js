@@ -14,7 +14,19 @@ const sendErrorToLogChannel = async (bot, message, e) => {
 };
 const wait = require("timers/promises").setTimeout;
 
+const sendInfoMessageToUser = async ({ bot, message }) => {
+  try {
+    const channel = await bot.channels?.cache?.get(
+      process.env.DISCORD_BOT_LEVELUP_CHANNEL_ID
+    );
+    channel.send(message);
+  } catch (err) {
+    sendErrorToLogChannel(bot, "sendInfoMessageToUser", err);
+  }
+};
+
 module.exports = {
+  sendInfoMessageToUser,
   sendErrorToLogChannel,
   wait,
 };
