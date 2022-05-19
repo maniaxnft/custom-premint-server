@@ -4,9 +4,14 @@ const Discord = require("discord.js");
 const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
-const { wait, sendInfoMessageToUser } = require("../utils");
+const {
+  wait,
+  sendInfoMessageToUser,
+  sendErrorToLogChannel,
+} = require("../utils");
 
-const updateUserInfo = () => {
+const whiteListEvents = () => {
+  main();
   cron.schedule("*/30 * * * *", () => {
     main();
   });
@@ -32,18 +37,24 @@ const main = async () => {
     await wait(500);
 
     for (let user of users) {
-      const didFirstRequirement = await checkIfMetntioned({ user });
+      const didFirstRequirement = await checkIfMetntioned({ bot, user });
       if (didFirstRequirement) {
         await addMemberXRole({ bot, user });
         break;
       }
+      //   const didSecondRequirement = await checkIfTagged({ bot, user });
+      //   if (didSecondRequirement) {
+      //     await addMemberXRole({ bot, user });
+      //     break;
+      //   }
+      await getMostCreativeTweets({ bot });
     }
   } catch (e) {
     console.log(e);
   }
 };
 
-const checkIfMetntioned = async ({ user }) => {
+const checkIfMetntioned = async ({ bot, user }) => {
   try {
     let mentioned = false;
     const start_time = new Date("10 March 2022 00:00 UTC").toISOString();
@@ -73,7 +84,67 @@ const checkIfMetntioned = async ({ user }) => {
     }
     return mentioned;
   } catch (e) {
+    sendErrorToLogChannel(bot, "Error at checkIfMetntioned", e);
     console.log("Error at checkIfMetntioned");
+    throw e;
+  }
+};
+
+// const checkIfTagged = async ({ bot }) => {
+//   try {
+//     const query = `&tweet.fields=author_id,conversation_id,created_at,in_reply_to_user_id,referenced_tweets&expansions=author_id,in_reply_to_user_id,referenced_tweets.id&user.fields=name,username`;
+//     const response = await axios.get(
+//       `https://api.twitter.com/2/tweets/search/recent${process.env.TWITTER_WHITELIST_TWEET_ID}${query}`,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+//         },
+//       }
+//     );
+//     console.log(JSON.stringify(response.data, null, 2));
+//     await wait(1000);
+//     return true;
+//   } catch (e) {
+//     sendErrorToLogChannel(bot, "Error at checkIfTagged", e);
+//     console.log("Error at checkIfTagged");
+//     throw e;
+//   }
+// };
+
+const getMostCreativeTweets = async ({ bot }) => {
+  try {
+    const query = `?q=%23${process.env.TWITTER_MOST_CREATIVE_TWEETS_HASHTAG}&result_type=recent`;
+    const response = await axios.get(
+      `https://api.twitter.com/1.1/search/tweets.json${query}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+        },
+      }
+    );
+    const tweets = response.data?.statuses;
+    if (Array.isArray(tweets)) {
+      for (const tweet of tweets) {
+        const twitterUserId = tweet.user?.id;
+        const tweetText = tweet.text;
+        const twitterUserName = tweet.user?.name;
+        let tweetLink = "";
+        if (tweet.user?.screen_name && tweet.id) {
+          tweetLink = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id}`;
+        }
+        await sentMostCreativeTweetsToDiscord({
+          bot,
+          tweetText,
+          twitterUserId,
+          tweetLink,
+          twitterUserName,
+        });
+        await wait(1000);
+      }
+    }
+  } catch (e) {
+    sendErrorToLogChannel(bot, "Error at getMostCreativeTweets", e);
+    console.log("Error at getMostCreativeTweets");
     throw e;
   }
 };
@@ -85,7 +156,7 @@ const addMemberXRole = async ({ bot, user }) => {
     const memberxRole = guild.roles?.cache?.find(
       (r) => r.id === `${process.env.DISCORD_BOT_MEMBERX_ROLE_ID}`
     );
-    let guildMember = bot.users.cache.get(user.discordId);
+    const guildMember = guild.members.cache.get(user.discordId);
     let isTeamMember = guildMember?._roles.filter(
       (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
     );
@@ -107,8 +178,38 @@ const addMemberXRole = async ({ bot, user }) => {
     await wait(1000);
   } catch (e) {
     console.log("Error at addMemberXRole");
+    sendErrorToLogChannel(bot, "Error at addMemberXRole", e);
     throw e;
   }
 };
 
-module.exports = updateUserInfo;
+const sentMostCreativeTweetsToDiscord = async ({
+  bot,
+  tweetText,
+  twitterUserId,
+  tweetLink,
+  twitterUserName,
+}) => {
+  if (
+    bot &&
+    tweetText &&
+    tweetText.substring(0, 2) !== "RT" &&
+    twitterUserId &&
+    tweetLink &&
+    twitterUserName
+  ) {
+    const channel = await bot?.channels?.cache?.get(
+      process.env.DISCORD_BOT_MOST_CREATIVE_TWEETS_CHANNEL_ID
+    );
+    const message = {
+      twitterUserName,
+      twitterUserId,
+      tweetText,
+      tweetLink,
+    };
+    const msg = JSON.stringify(JSON.parse(JSON.stringify(message)), null, 2);
+    channel.send("```json\n" + msg + "\n```");
+  }
+};
+
+module.exports = whiteListEvents;
