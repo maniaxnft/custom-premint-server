@@ -3,15 +3,16 @@ const axios = require("axios");
 const Discord = require("discord.js");
 const cron = require("node-cron");
 
-const userModel = require("../api/auth/models");
+const userModel = require("../../api/auth/models");
+const creativeTweetModel = require("./model");
+
 const {
   wait,
   sendInfoMessageToUser,
   sendErrorToLogChannel,
-} = require("../utils");
+} = require("../../utils");
 
-const whiteListEvents = () => {
-  main();
+const checkWhitelistEvents = () => {
   cron.schedule("*/30 * * * *", () => {
     main();
   });
@@ -47,21 +48,30 @@ const main = async () => {
       //     await addMemberXRole({ bot, user });
       //     break;
       //   }
-      await getMostCreativeTweets({ bot });
     }
+    await getTweetsWithHashtag({ bot });
   } catch (e) {
     console.log(e);
   }
 };
 
-const checkIfMetntioned = async ({ bot, user }) => {
+const checkIfMetntioned = async ({ bot, user, nextToken }) => {
   try {
     let mentioned = false;
-    const start_time = new Date("10 March 2022 00:00 UTC").toISOString();
-    const end_time = new Date("10 April 2022 23:59 UTC").toISOString();
-    const query = `start_time=${start_time}&end_time=${end_time}&max_results=100&exclude=replies,retweets`;
+    const start_time = new Date(
+      process.env.TWITTER_MENTION_EVENT_START_DATE
+    ).toISOString();
+    const end_time = new Date(
+      process.env.TWITTER_MENTION_EVENT_END_DATE
+    ).toISOString();
+
+    let query = `start_time=${start_time}&end_time=${end_time}&max_results=100&exclude=replies,retweets`;
+    if (nextToken) {
+      query = query.concat(`&pagination_token=${nextToken}`);
+    }
+    // https://developer.twitter.com/en/docs/twitter-api/tweets/timelines/api-reference/get-users-id-tweets
     const response = await axios.get(
-      `https://api.twitter.com/2/users/${user.twitterId}/tweets?${query}`,
+      `https://api.twitter.com/2/users/2244994945/tweets?${query}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
@@ -82,10 +92,14 @@ const checkIfMetntioned = async ({ bot, user }) => {
         break;
       }
     }
+    const newNextToken = response.data?.meta?.next_token;
+    if (newNextToken) {
+      await checkIfMetntioned({ bot, user, nextToken: newNextToken });
+    }
     return mentioned;
   } catch (e) {
-    sendErrorToLogChannel(bot, "Error at checkIfMetntioned", e);
     console.log("Error at checkIfMetntioned");
+    sendErrorToLogChannel(bot, "Error at checkIfMetntioned", e);
     throw e;
   }
 };
@@ -111,7 +125,7 @@ const checkIfMetntioned = async ({ bot, user }) => {
 //   }
 // };
 
-const getMostCreativeTweets = async ({ bot }) => {
+const getTweetsWithHashtag = async ({ bot }) => {
   try {
     const query = `?q=%23${process.env.TWITTER_MOST_CREATIVE_TWEETS_HASHTAG}&result_type=recent`;
     const response = await axios.get(
@@ -125,27 +139,55 @@ const getMostCreativeTweets = async ({ bot }) => {
     const tweets = response.data?.statuses;
     if (Array.isArray(tweets)) {
       for (const tweet of tweets) {
+        // VALIDATION
         const twitterUserId = tweet.user?.id;
         const tweetText = tweet.text;
         const twitterUserName = tweet.user?.name;
-        let tweetLink = "";
-        if (tweet.user?.screen_name && tweet.id) {
-          tweetLink = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id}`;
+        const tweetId = tweet.id;
+        const userScreenName = tweet.user?.screen_name;
+        const tweetLink = `https://twitter.com/${userScreenName}/status/${tweetId}`;
+        if (
+          !twitterUserId ||
+          !tweetText ||
+          !twitterUserName ||
+          !tweetId ||
+          !userScreenName
+        ) {
+          return;
         }
-        await sentMostCreativeTweetsToDiscord({
-          bot,
-          tweetText,
-          twitterUserId,
-          tweetLink,
-          twitterUserName,
-        });
-        await wait(1000);
+        const isNotRetweet = tweetText.substring(0, 2) !== "RT";
+        const isTweetAlreadySent = await creativeTweetModel
+          .findOne({
+            tweetId,
+          })
+          .lean()
+          .exec();
+
+        // EXECUTION
+        if (!isTweetAlreadySent && !isNotRetweet) {
+          const sent = await sentMostCreativeTweetsToDiscord({
+            bot,
+            tweetText,
+            twitterUserId,
+            tweetLink,
+            twitterUserName,
+          });
+          if (sent) {
+            await creativeTweetModel.create({
+              tweetText,
+              twitterUserId,
+              tweetLink,
+              twitterUserName,
+              hashtag: process.env.TWITTER_MOST_CREATIVE_TWEETS_HASHTAG,
+            });
+          }
+          await wait(1000);
+        }
       }
     }
   } catch (e) {
     sendErrorToLogChannel(bot, "Error at getMostCreativeTweets", e);
     console.log("Error at getMostCreativeTweets");
-    throw e;
   }
 };
 
@@ -190,26 +232,28 @@ const sentMostCreativeTweetsToDiscord = async ({
   tweetLink,
   twitterUserName,
 }) => {
-  if (
-    bot &&
-    tweetText &&
-    tweetText.substring(0, 2) !== "RT" &&
-    twitterUserId &&
-    tweetLink &&
-    twitterUserName
-  ) {
-    const channel = await bot?.channels?.cache?.get(
-      process.env.DISCORD_BOT_MOST_CREATIVE_TWEETS_CHANNEL_ID
-    );
-    const message = {
-      twitterUserName,
-      twitterUserId,
-      tweetText,
-      tweetLink,
-    };
-    const msg = JSON.stringify(JSON.parse(JSON.stringify(message)), null, 2);
-    channel.send("```json\n" + msg + "\n```");
+  if (bot) {
+    try {
+      const channel = await bot?.channels?.cache?.get(
+        process.env.DISCORD_BOT_MOST_CREATIVE_TWEETS_CHANNEL_ID
+      );
+
+      const messageEmbed = new Discord.MessageEmbed()
+        .setColor(`#${process.env.DISCORD_BOT_COLOR}`)
+        .addFields(
+          { name: "Twitter Username", value: twitterUserName },
+          { name: "Twitter UserId", value: twitterUserId.toString() },
+          { name: "Tweet Link", value: tweetLink },
+          { name: "Tweet Text", value: tweetText }
+        );
+      await channel.send({ embeds: [messageEmbed] });
+      return true;
+    } catch (e) {
+      console.log("Error at sentMostCreativeTweetsToDiscord");
+      throw e;
+    }
   }
+  return false;
 };
 
-module.exports = whiteListEvents;
+module.exports = checkWhitelistEvents;
