@@ -25,8 +25,42 @@ const sendInfoMessageToUser = async ({ bot, message }) => {
   }
 };
 
+const addMemberXRole = async ({ bot, user }) => {
+  try {
+    const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
+
+    const memberxRole = guild.roles?.cache?.find(
+      (r) => r.id === `${process.env.DISCORD_BOT_MEMBERX_ROLE_ID}`
+    );
+    const guildMember = guild.members.cache.get(user.discordId);
+    let isTeamMember = guildMember?._roles.filter(
+      (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
+    );
+    let isVerified = guildMember?._roles.filter(
+      (roleId) => roleId === process.env.DISCORD_BOT_VERIFIED_ROLE_ID
+    );
+    let isMemberX = guildMember?._roles.filter(
+      (roleId) => roleId === process.env.DISCORD_BOT_MEMBERX_ROLE_ID
+    );
+
+    if (!isMemberX && !isTeamMember && isVerified) {
+      guildMember.roles.add(memberxRole);
+      sendInfoMessageToUser({
+        bot,
+        guildMember,
+        message: `<@${user.discordId}> You have been promoted with <@&${memberxRole.id}> Role !`,
+      });
+    }
+    await wait(1000);
+  } catch (e) {
+    sendErrorToLogChannel(bot, "Error at addMemberXRole", e);
+    throw e;
+  }
+};
+
 module.exports = {
   sendInfoMessageToUser,
   sendErrorToLogChannel,
   wait,
+  addMemberXRole,
 };

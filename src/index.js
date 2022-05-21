@@ -9,7 +9,9 @@ const mongoose = require("mongoose");
 
 const api = require("./api/auth");
 const oauth = require("./api/oauth");
+
 const initCrons = require("./cron");
+const modules = require("./modules");
 
 const boot = async () => {
   try {
@@ -36,6 +38,7 @@ const boot = async () => {
   app.use("/api/oauth", oauth);
 
   initCrons();
+  modules();
 
   // start
   const port = process.env.PORT;

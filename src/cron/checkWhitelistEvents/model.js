@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema({
+const creativeTweetSchema = mongoose.Schema({
   twitterUserId: {
     type: String,
   },
@@ -21,5 +21,5 @@ const userSchema = mongoose.Schema({
   },
 });
 
-const creativeTweetModel = mongoose.model("creativeTweet", userSchema);
+const creativeTweetModel = mongoose.model("creativeTweet", creativeTweetSchema);
 module.exports = creativeTweetModel;
