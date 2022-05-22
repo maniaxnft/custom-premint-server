@@ -56,8 +56,7 @@ router.post("/validate_signature", async (req, res) => {
       secure: process.env.NODE_ENV !== "development",
       httpOnly: true,
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      sameSite: "lax",
-      path: "/",
+      domain: process.env.DOMAIN,
     });
     res.send("success");
   } catch (e) {
