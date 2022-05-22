@@ -97,8 +97,8 @@ const checkIfDiscordMemberAndVerified = async (user) => {
       const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
       const discordMember = guild.members.cache.get(discordId);
 
-      let verified = discordMember?._roles.filter(
-        (roleId) => roleId === process.env.DISCORD_BOT_VERIFIED_ROLE_ID
+      const verified = await discordMember.roles.cache.has(
+        process.env.DISCORD_BOT_VERIFIED_ROLE_ID
       );
 
       if (verified) {
