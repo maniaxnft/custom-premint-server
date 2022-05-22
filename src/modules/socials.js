@@ -1,37 +1,16 @@
 const axios = require("axios");
-const Discord = require("discord.js");
 const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
-const checkIfFollowingSocials = () => {
+const checkIfFollowingSocials = (bot) => {
   cron.schedule("*/30 * * * *", () => {
-    main();
+    main(bot);
   });
 };
 
-const main = async () => {
-  const bot = new Discord.Client({
-    intents: [
-      Discord.Intents.FLAGS.GUILDS,
-      Discord.Intents.FLAGS.GUILD_MESSAGES,
-      Discord.Intents.FLAGS.GUILD_MEMBERS,
-      Discord.Intents.FLAGS.GUILD_PRESENCES,
-      Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-    ],
-  });
-  try {
-    await bot.login(process.env.DISCORD_BOT_TOKEN);
-    await wait(3000);
-    await check(bot);
-  } catch (e) {
-    sendErrorToLogChannel(bot, "checkIfFollowingSocialsError", e);
-    throw new Error(e);
-  }
-};
-
-const check = async (bot) => {
+const main = async (bot) => {
   const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
   const users = await userModel
     .find({
@@ -40,6 +19,7 @@ const check = async (bot) => {
       walletAddress: { $exists: true },
     })
     .lean();
+
   for (let user of users) {
     const { walletAddress, twitterId, discordId } = user;
     try {

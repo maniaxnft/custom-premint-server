@@ -8,34 +8,24 @@ const { creativeTweetModel } = require("./model");
 
 const { wait, sendErrorToLogChannel, addMemberXRole } = require("../../utils");
 
-const checkWhitelistEvents = () => {
+const checkWhitelistEvents = (bot) => {
   cron.schedule("*/30 * * * *", () => {
-    main();
+    main(bot);
   });
 };
 
-const main = async () => {
+const main = async (bot) => {
   try {
     const users = await userModel
       .find({ twitterId: { $exists: true }, discordId: { $exists: true } })
       .lean()
       .exec();
 
-    const bot = new Discord.Client({
-      intents: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_MESSAGES,
-        Discord.Intents.FLAGS.GUILD_MEMBERS,
-        Discord.Intents.FLAGS.GUILD_PRESENCES,
-        Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-      ],
-    });
-    await bot.login(process.env.DISCORD_BOT_TOKEN);
-    await wait(500);
-
+    // Check first event
     await getTweetsWithHashtag({ bot });
 
     for (let user of users) {
+      // Check second event
       const didFirstRequirement = await checkIfMetntioned({ bot, user });
       if (didFirstRequirement) {
         await addMemberXRole({ bot, user });
@@ -48,7 +38,7 @@ const main = async () => {
       //   }
     }
   } catch (e) {
-    console.log(e);
+    console.error("checkWhitelistEvents: " + e.message);
   }
 };
 
@@ -117,7 +107,7 @@ const checkIfMetntioned = async ({ bot, user, nextToken }) => {
 //     return true;
 //   } catch (e) {
 //     sendErrorToLogChannel(bot, "Error at checkIfTagged", e);
-//     console.log("Error at checkIfTagged");
+//     console.error("checkIfTagged: " + e.message);
 //     throw e;
 //   }
 // };
@@ -212,7 +202,7 @@ const sentMostCreativeTweetsToDiscord = async ({
       await channel.send({ embeds: [messageEmbed] });
       return true;
     } catch (e) {
-      console.log("Error at sentMostCreativeTweetsToDiscord");
+      console.error("sentMostCreativeTweetsToDiscord: " + e.message);
       throw e;
     }
   }

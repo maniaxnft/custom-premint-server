@@ -1,5 +1,4 @@
 const axios = require("axios");
-const Discord = require("discord.js");
 const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
@@ -9,29 +8,10 @@ const {
   sendInfoMessageToUser,
 } = require("../utils");
 
-const checkIfEligibleForRoles = () => {
+const checkIfEligibleForRoles = (bot) => {
   cron.schedule("*/30 * * * *", () => {
-    main();
+    checkForAllUsers(bot);
   });
-};
-
-const main = async () => {
-  const bot = new Discord.Client({
-    intents: [
-      Discord.Intents.FLAGS.GUILDS,
-      Discord.Intents.FLAGS.GUILD_MESSAGES,
-      Discord.Intents.FLAGS.GUILD_MEMBERS,
-      Discord.Intents.FLAGS.GUILD_PRESENCES,
-      Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-    ],
-  });
-  try {
-    await bot.login(process.env.DISCORD_BOT_TOKEN);
-    await wait(3000);
-    await checkForAllUsers(bot);
-  } catch (e) {
-    sendErrorToLogChannel(bot, "checkIfEligibleForRolesError", e);
-  }
 };
 
 const checkForAllUsers = async (bot) => {
@@ -63,7 +43,6 @@ const checkForAllUsers = async (bot) => {
     );
 
     if (teamMember || !verified) {
-      // Do nothing if not verified or already team
       return;
     }
 

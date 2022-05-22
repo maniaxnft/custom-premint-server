@@ -7,22 +7,22 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const api = require("./api/auth");
+const auth = require("./api/auth");
 const oauth = require("./api/oauth");
 
-const initCrons = require("./cron");
 const modules = require("./modules");
 
 const boot = async () => {
+  // Connect to db
   try {
     await mongoose.connect(process.env.MONGO_URL);
   } catch (e) {
-    console.log(e);
+    console.error(e);
     process.exit(1);
   }
 
+  // Configure api
   const app = express();
-
   app.use(
     cors({
       credentials: true,
@@ -34,13 +34,13 @@ const boot = async () => {
   app.use(cookieParser());
   app.use(bodyParser.json());
 
-  app.use("/api", api);
+  app.use("/api", auth);
   app.use("/api/oauth", oauth);
 
-  initCrons();
+  // Main functions
   modules();
 
-  // start
+  // Start
   const port = process.env.PORT;
   app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

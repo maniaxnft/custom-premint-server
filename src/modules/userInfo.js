@@ -1,20 +1,18 @@
 const axios = require("axios");
-const Discord = require("discord.js");
 const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
 const { wait } = require("../utils");
 
-const updateUserInfo = () => {
+const updateUserInfo = (bot) => {
   cron.schedule("*/30 * * * *", () => {
-    main();
+    main(bot);
   });
 };
 
-const main = async () => {
+const main = async (bot) => {
   try {
     const users = await userModel.find({}).lean();
-
     for (let user of users) {
       if (user.twitterId) {
         const res = await axios.get(
@@ -36,17 +34,6 @@ const main = async () => {
       }
 
       if (user.discordId) {
-        const bot = new Discord.Client({
-          intents: [
-            Discord.Intents.FLAGS.GUILDS,
-            Discord.Intents.FLAGS.GUILD_MESSAGES,
-            Discord.Intents.FLAGS.GUILD_MEMBERS,
-            Discord.Intents.FLAGS.GUILD_PRESENCES,
-            Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-          ],
-        });
-        await bot.login(process.env.DISCORD_BOT_TOKEN);
-        await wait(500);
         let discordUser = bot.users.cache.get(user.discordId);
         let discordName = discordUser?.username;
         if (discordName) {
@@ -58,7 +45,7 @@ const main = async () => {
       }
     }
   } catch (e) {
-    console.log(e);
+    console.error("updateUserInfo: " + e.message);
   }
 };
 
