@@ -53,9 +53,11 @@ router.post("/validate_signature", async (req, res) => {
     // set jwt to the user's browser cookies
     const token = signJwt(user);
     res.cookie("token", token, {
-      secure: true,
+      secure: process.env.NODE_ENV !== "development",
       httpOnly: true,
-      maxAge: 720 * 60 * 60 * 1000, // 30 days
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      sameSite: "lax",
+      path: "/",
     });
     res.send("success");
   } catch (e) {
