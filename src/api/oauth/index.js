@@ -89,7 +89,7 @@ router.post(
         res.status(500).send("Something went wrong");
       }
     } catch (e) {
-      res.status(500).send("Something went wrong");
+      res.status(500).send(e.message);
     }
   }
 );
