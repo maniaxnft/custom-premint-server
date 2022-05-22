@@ -11,7 +11,7 @@ const { checkNftCount } = require("./services");
 
 const signJwt = (user) => {
   const token = jwt.sign(user, process.env.JWT_SECRET, {
-    expiresIn: "30d",
+    expiresIn: "7d",
   });
   return token;
 };
