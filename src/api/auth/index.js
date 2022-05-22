@@ -49,11 +49,11 @@ router.post("/validate_signature", async (req, res) => {
       throw new Error("User not found");
     }
     checkNftCount(walletAddress);
+
     // set jwt to the user's browser cookies
     const token = signJwt(user);
-    const secure = process.env.NODE_ENV !== "development";
     res.cookie("token", token, {
-      secure,
+      secure: true,
       httpOnly: true,
       maxAge: 720 * 60 * 60 * 1000, // 30 days
     });

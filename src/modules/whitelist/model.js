@@ -21,5 +21,8 @@ const creativeTweetSchema = mongoose.Schema({
   },
 });
 
-const creativeTweetModel = mongoose.model("creativeTweet", creativeTweetSchema);
+const creativeTweetModel = mongoose.model(
+  "creative-tweet",
+  creativeTweetSchema
+);
 module.exports = creativeTweetModel;
