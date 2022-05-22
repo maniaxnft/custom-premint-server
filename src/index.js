@@ -34,6 +34,10 @@ const boot = async () => {
   app.use(cookieParser());
   app.use(bodyParser.json());
 
+  app.get("/", (req, res) => {
+    res.send("Alive");
+  });
+
   app.use("/api", auth);
   app.use("/api/oauth", oauth);
 
