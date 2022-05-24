@@ -95,16 +95,16 @@ const checkIfDiscordMemberAndVerified = async (user) => {
       await bot.login(process.env.DISCORD_BOT_TOKEN);
       await wait(500);
       const guild = await bot.guilds?.fetch(process.env.DISCORD_BOT_GUILD_ID);
-      const discordMember = guild.members.cache.get(discordId);
+      const guildMember = guild.members.cache.get(discordId);
 
-      const verified = await discordMember.roles.cache.has(
+      const verified = await guildMember.roles.cache.has(
         process.env.DISCORD_BOT_VERIFIED_ROLE_ID
       );
 
       if (verified) {
         await userModel.findOneAndUpdate(
           { walletAddress },
-          { isDiscordMember: discordMember ? true : false }
+          { isDiscordMember: guildMember ? true : false }
         );
       }
     } catch (e) {

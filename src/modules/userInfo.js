@@ -3,6 +3,10 @@ const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
 const { wait } = require("../utils");
+const {
+  checkIfFollowingTwitter,
+  checkIfDiscordMemberAndVerified,
+} = require("../api/oauth/services");
 
 const updateUserInfo = (bot) => {
   cron.schedule("*/30 * * * *", () => {
@@ -14,6 +18,12 @@ const main = async (bot) => {
   try {
     const users = await userModel.find({}).lean();
     for (let user of users) {
+      if (user.walletAddress && user.twitterId) {
+        await checkIfFollowingTwitter(user);
+      }
+      if (user.walletAddress && user.discordId) {
+        await checkIfDiscordMemberAndVerified(user);
+      }
       if (user.twitterId) {
         const res = await axios.get(
           `https://api.twitter.com/2/users/${user.twitterId}`,

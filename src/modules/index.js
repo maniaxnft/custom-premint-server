@@ -1,9 +1,9 @@
 const Discord = require("discord.js");
 
-const checkIfFollowingSocials = require("./socials");
+const checkIfFollowingSocials = require("./social");
 const updateUserInfo = require("./userInfo");
 const checkForWhitelistEvents = require("./whitelist");
-// const checkIfEligibleForRoles = require("./roles");
+// const checkIfEligibleForRoles = require("./role");
 
 const { wait } = require("../utils");
 

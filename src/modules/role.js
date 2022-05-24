@@ -29,16 +29,17 @@ const checkForAllUsers = async (bot) => {
   const users = await userModel.find({
     discordId: { $exists: true },
     twitterId: { $exists: true },
+    isFollowingFromTwitter: true,
     walletAddress: { $exists: true },
   });
   for (let user of users) {
     const { walletAddress, discordId } = user;
     const guildMember = guild.members.cache.get(discordId);
 
-    let teamMember = guildMember?._roles.filter(
+    let teamMember = guildMember.roles.cache.has(
       (roleId) => roleId === process.env.DISCORD_BOT_TEAM_ROLE_ID
     );
-    let verified = guildMember?._roles.filter(
+    let verified = guildMember.roles.cache.has(
       (roleId) => roleId === process.env.DISCORD_BOT_VERIFIED_ROLE_ID
     );
 
@@ -80,7 +81,7 @@ const checkForAllUsers = async (bot) => {
 };
 
 const checkIfManiac = ({ bot, result, guildMember, maniacRole }) => {
-  let isManiac = guildMember?._roles.filter(
+  let isManiac = guildMember?.roles.cache.has(
     (roleId) => roleId === process.env.DISCORD_BOT_MANIAC_ROLE_ID
   );
   const guildMemberId = guildMember.user.id;
@@ -103,7 +104,7 @@ const checkIfManiac = ({ bot, result, guildMember, maniacRole }) => {
 };
 
 const checkIfManiax = ({ bot, result, guildMember, maniaxRole }) => {
-  let isManiax = guildMember?._roles.filter(
+  let isManiax = guildMember?.roles.cache.has(
     (roleId) => roleId === process.env.DISCORD_BOT_MANIAX_ROLE_ID
   );
   const guildMemberId = guildMember.user.id;
@@ -126,7 +127,7 @@ const checkIfManiax = ({ bot, result, guildMember, maniaxRole }) => {
 };
 
 const checkIfRareX = async ({ bot, result, guildMember, rarexRole }) => {
-  let isRareX = guildMember?._roles.filter(
+  let isRareX = guildMember?.roles.cache.has(
     (roleId) => roleId === process.env.DISCORD_BOT_RAREX_ROLE_ID
   );
   const guildMemberId = guildMember.user.id;
