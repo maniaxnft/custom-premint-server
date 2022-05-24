@@ -4,18 +4,12 @@ const { sendErrorToLogChannel, wait } = require("../../utils");
 const tagYourFriends = async ({ bot, user, nextToken }) => {
   try {
     let isTagged = false;
-    const startTime = new Date(
-      process.env.TWITTER_FRIENDS_EVENT_START_DATE
-    ).toISOString();
-    const endTime = new Date(
-      process.env.TWITTER_FRIENDS_EVENT_END_DATE
-    ).toISOString();
+    const startTime = new Date(process.env.TWITTER_FRIENDS_EVENT_START_DATE);
+    const endTime = new Date(process.env.TWITTER_FRIENDS_EVENT_END_DATE);
 
-    const quoteTweetId = new Date(
-      process.env.TWITTER_QUOTE_TWEET_ID
-    ).toISOString();
+    const quoteTweetId = process.env.TWITTER_QUOTE_TWEET_ID;
 
-    let query = `tweet.fields=created_at&user.fields=&expansions=author_id&max_results=100&exclude=replies`;
+    let query = `max_results=100&tweet.fields=created_at&user.fields=id&expansions=entities.mentions.username%2Cauthor_id&exclude=replies%2Cretweets`;
     if (nextToken) {
       query = query.concat(`&pagination_token=${nextToken}`);
     }
@@ -28,7 +22,7 @@ const tagYourFriends = async ({ bot, user, nextToken }) => {
         },
       }
     );
-    await wait(1000);
+    await wait(3000);
     const tweets = response.data?.data;
     if (response.data?.meta?.result_count === 0 || !Array.isArray(tweets)) {
       return false;
@@ -41,9 +35,10 @@ const tagYourFriends = async ({ bot, user, nextToken }) => {
         Array.isArray(tweet.entities?.mentions)
       ) {
         const isBetweenDates =
-          tweet.created_at > startTime && endTime < tweet.created_at;
+          new Date(tweet.created_at) > startTime &&
+          endTime < new Date(tweet.created_at);
         const isAuthor = tweet.author_id === user.twitterId;
-        const didRequirement = tweet.entities.mentions.length >= 3;
+        const didRequirement = tweet.entities?.mentions?.length >= 3;
         if (isAuthor && didRequirement && isBetweenDates) {
           isTagged = true;
           break;

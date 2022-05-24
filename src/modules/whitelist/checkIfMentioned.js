@@ -25,15 +25,14 @@ const checkIfMentioned = async ({ bot, user, nextToken }) => {
         },
       }
     );
-    await wait(1000);
-
+    await wait(3000);
     const tweets = response.data?.data;
     if (response.data?.meta?.result_count === 0 || !Array.isArray(tweets)) {
       return false;
     }
     for (let tweet of tweets) {
       if (
-        tweet.text.includes(`@${process.env.TWITTER_OFFICIAL_CHANNEL_NAME}`)
+        tweet.text?.includes(`@${process.env.TWITTER_OFFICIAL_CHANNEL_NAME}`)
       ) {
         mentioned = true;
         break;

@@ -59,7 +59,7 @@ const mostCreativeTweets = async ({ bot }) => {
               hashtag: process.env.TWITTER_MOST_CREATIVE_TWEETS_HASHTAG,
             });
           }
-          await wait(1000);
+          await wait(3000);
         }
       }
     }

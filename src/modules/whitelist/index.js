@@ -8,10 +8,10 @@ const userModel = require("../../api/auth/models");
 const { addMemberXRole } = require("../../utils");
 
 const checkWhitelistEvents = (bot) => {
-  cron.schedule("*/30 * * * *", () => {
+  cron.schedule("*/60 * * * *", () => {
     if (
-      new Date().toISOString() >
-      new Date(process.env.TWITTER_WHITELIST_START_DATE).toISOString()
+      new Date().getTime() >
+      new Date(process.env.TWITTER_WHITELIST_START_DATE).getTime()
     ) {
       check(bot);
     }
