@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 require("dotenv-safe").config();
 
 const express = require("express");

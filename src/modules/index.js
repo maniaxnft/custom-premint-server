@@ -26,7 +26,7 @@ const initCrons = async () => {
     checkForWhitelistEvents(bot);
     // checkIfEligibleForRoles(bot);
   } catch (e) {
-    console.error("initCrons: " + e.message);
+    console.error("Error at initCrons", e);
     throw e;
   }
 };

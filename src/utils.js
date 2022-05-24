@@ -53,8 +53,8 @@ const addMemberXRole = async ({ bot, user }) => {
     }
     await wait(1000);
   } catch (e) {
+    console.error("Error at addMemberXRole", e);
     sendErrorToLogChannel(bot, "Error at addMemberXRole", e);
-    throw e;
   }
 };
 
