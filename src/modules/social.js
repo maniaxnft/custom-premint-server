@@ -38,8 +38,9 @@ const main = async (bot) => {
           },
         }
       );
-      const accessToken = tokenRes.data?.access_token;
+      await wait(1000);
 
+      const accessToken = tokenRes.data?.access_token;
       const res = await axios.get(
         `https://api.twitter.com/2/users/${twitterId}/following?max_results=1000`,
         {

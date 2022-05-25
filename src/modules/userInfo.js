@@ -33,6 +33,7 @@ const main = async (bot) => {
             },
           }
         );
+        await wait(1000);
         const twitterName = res.data?.data?.username;
         if (twitterName) {
           await userModel.findOneAndUpdate(
@@ -40,7 +41,6 @@ const main = async (bot) => {
             { twitterName }
           );
         }
-        await wait(1000);
       }
 
       if (user.discordId) {

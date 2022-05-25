@@ -56,6 +56,7 @@ const checkForAllUsers = async (bot) => {
           },
         }
       );
+      wait(1000);
       const result = res.data?.result;
       if (result) {
         await userModel.findOneAndUpdate(
@@ -72,8 +73,6 @@ const checkForAllUsers = async (bot) => {
       await userModel.findOneAndUpdate({ walletAddress }, { hasRare });
       checkIfManiac({ bot, result, guildMember, maniacRole });
       checkIfManiax({ bot, result, guildMember, maniaxRole });
-
-      wait(1000);
     } catch (e) {
       sendErrorToLogChannel(bot, e.response?.data?.message, e);
     }
