@@ -1,5 +1,6 @@
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
+const rateLimit = require("express-rate-limit");
 
 const userModel = require("./auth/models");
 
@@ -49,7 +50,17 @@ const checkCaptcha = async (req, res, next) => {
   }
 };
 
+const rateLimiter = rateLimit({
+  windowMs: 30 * 1000, // 30 seconds in milliseconds
+  max: 5,
+  message:
+    "You have reached maximum retries. Please try again after 30 seconds",
+  statusCode: 429,
+  headers: true,
+});
+
 module.exports = {
   authenticateUser,
   checkCaptcha,
+  rateLimiter,
 };

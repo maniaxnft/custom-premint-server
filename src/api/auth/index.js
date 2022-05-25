@@ -6,7 +6,11 @@ const { ethers } = require("ethers");
 const jwt = require("jsonwebtoken");
 
 const userModel = require("./models");
-const { authenticateUser, checkCaptcha } = require("../middleware");
+const {
+  authenticateUser,
+  checkCaptcha,
+  rateLimiter,
+} = require("../middleware");
 const { checkNftCount } = require("./services");
 
 const signJwt = (user) => {
@@ -16,7 +20,7 @@ const signJwt = (user) => {
   return token;
 };
 
-router.post("/nonce", checkCaptcha, async (req, res) => {
+router.post("/nonce", rateLimiter, checkCaptcha, async (req, res) => {
   const nonce = generateNonce();
   const walletAddress = req.body.walletAddress;
 
@@ -63,7 +67,7 @@ router.post("/validate_signature", async (req, res) => {
   }
 });
 
-router.get("/isAuthenticated", authenticateUser, (req, res) => {
+router.get("/isAuthenticated", rateLimiter, authenticateUser, (req, res) => {
   if (req?.walletAddress) {
     res.status(200).send({ walletAddress: req?.walletAddress });
   } else {
@@ -76,7 +80,7 @@ router.get("/logout", authenticateUser, async (req, res) => {
   res.status(401).send(`Logged out`);
 });
 
-router.get("/user", authenticateUser, async (req, res) => {
+router.get("/user", rateLimiter, authenticateUser, async (req, res) => {
   const walletAddress = req?.walletAddress;
   try {
     let user = await userModel.findOne({ walletAddress }).lean();

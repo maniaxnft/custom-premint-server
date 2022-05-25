@@ -5,64 +5,75 @@ const axios = require("axios");
 const { TwitterApi } = require("twitter-api-v2");
 
 const userModel = require("../auth/models");
-const { authenticateUser, checkCaptcha } = require("../middleware");
+const {
+  authenticateUser,
+  checkCaptcha,
+  rateLimiter,
+} = require("../middleware");
 const twitterCallbackModel = require("./model");
 const {
   checkIfFollowingTwitter,
   checkIfDiscordMemberAndVerified,
 } = require("./services");
 
-router.post("/discord", authenticateUser, checkCaptcha, async (req, res) => {
-  const walletAddress = req.walletAddress;
-  const code = req.body?.code;
-  if (code) {
-    try {
-      const params = new URLSearchParams();
-      params.append("client_id", process.env.DISCORD_CLIENT_ID);
-      params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
-      params.append("grant_type", "authorization_code");
-      params.append("code", code);
-      params.append("redirect_uri", process.env.DISCORD_REDIRECT_URI);
-      params.append("scope", "identify");
+router.post(
+  "/discord",
+  rateLimiter,
+  authenticateUser,
+  checkCaptcha,
+  async (req, res) => {
+    const walletAddress = req.walletAddress;
+    const code = req.body?.code;
+    if (code) {
+      try {
+        const params = new URLSearchParams();
+        params.append("client_id", process.env.DISCORD_CLIENT_ID);
+        params.append("client_secret", process.env.DISCORD_CLIENT_SECRET);
+        params.append("grant_type", "authorization_code");
+        params.append("code", code);
+        params.append("redirect_uri", process.env.DISCORD_REDIRECT_URI);
+        params.append("scope", "identify");
 
-      const response = await axios.post(
-        "https://discord.com/api/oauth2/token",
-        params,
-        { headers: { "Content-type": "application/x-www-form-urlencoded" } }
-      );
-      const access_token = response.data?.access_token;
-      const userResponse = await axios.get(
-        "https://discord.com/api/users/@me",
-        {
-          headers: {
-            Authorization: `Bearer ${access_token}`,
-          },
-        }
-      );
-      if (userResponse.data?.username && userResponse.data?.id) {
-        const user = await userModel.findOneAndUpdate(
-          { walletAddress },
-          {
-            discordId: userResponse.data?.id,
-            discordName: userResponse.data?.username,
-          },
-          { new: true }
+        const response = await axios.post(
+          "https://discord.com/api/oauth2/token",
+          params,
+          { headers: { "Content-type": "application/x-www-form-urlencoded" } }
         );
-        await checkIfDiscordMemberAndVerified(user);
-        res.send(userResponse.data?.username);
-      } else {
-        res.status(500).send("Something went wrong");
+        const access_token = response.data?.access_token;
+        const userResponse = await axios.get(
+          "https://discord.com/api/users/@me",
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          }
+        );
+        if (userResponse.data?.username && userResponse.data?.id) {
+          const user = await userModel.findOneAndUpdate(
+            { walletAddress },
+            {
+              discordId: userResponse.data?.id,
+              discordName: userResponse.data?.username,
+            },
+            { new: true }
+          );
+          await checkIfDiscordMemberAndVerified(user);
+          res.send(userResponse.data?.username);
+        } else {
+          res.status(500).send("Something went wrong");
+        }
+      } catch (e) {
+        res.status(400).send("Something went wrong");
       }
-    } catch (e) {
-      res.status(400).send("Something went wrong");
+    } else {
+      res.status(401).send("Something went wrong");
     }
-  } else {
-    res.status(401).send("Something went wrong");
   }
-});
+);
 
 router.post(
   "/twitter/request_token",
+  rateLimiter,
   authenticateUser,
   checkCaptcha,
   async (req, res) => {
