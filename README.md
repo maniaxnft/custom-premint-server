@@ -8,6 +8,7 @@ There is already Premint existing but this app allows you to customize it, add s
 - Used Sign-in with Ethereum so people do not need to provide their email or username and keep their personal data
 - When you sign a message with Metamask, I verify it at the server side, only by then I set the jwt token to browser's cookies
 - Used [Invisible reCAPTCHA](https://developers.google.com/recaptcha/docs/invisible) to prevent bot's    
+- Used `node-cron` to check every hour if users are completed the whitelist requirements by checking quoted tweets from Twitter Api etc
 
 ## Step 1
 - Create `.env` file, copy and paste the variables from `.env.example`
