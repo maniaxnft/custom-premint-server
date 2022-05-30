@@ -7,7 +7,7 @@ There is already Premint existing but this app allows you to customize it, add s
 - Used oauth 2.0 flow of [Twitter](https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens) and [Discord](https://discord.com/developers/docs/topics/oauth2) to get user id's and user name's 
 - Used Sign-in with Ethereum so people do not need to provide their email or username and keep their personal data
 - When you sign a message with Metamask, I verify it at the server side, only by then I set the jwt token to browser's cookies
-- Used invisible Recapthca to prevent bot's    
+- Used [Invisible reCAPTCHA](https://developers.google.com/recaptcha/docs/invisible) to prevent bot's    
 
 ## Step 1
 - Create `.env` file, copy and paste the variables from `.env.example`
