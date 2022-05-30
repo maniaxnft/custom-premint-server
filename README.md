@@ -8,9 +8,9 @@ Client app that using this api is https://github.com/maniaxnft/custom-premint-cl
 
 
 ## Technologies
-- Used oauth 2.0 flow of [Twitter](https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens) and [Discord](https://discord.com/developers/docs/topics/oauth2) to get user id's and user name's 
+- Used OAuth 2.0 flow of [Twitter](https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens) and [Discord](https://discord.com/developers/docs/topics/oauth2) to get user ids and user names 
 - Used Sign-in with Ethereum so people do not need to provide their email or username and keep their personal data
-- When you sign a message with Metamask, I verify it at the server side, only by then I set the jwt token to browser's cookies
+- When you sign a message with Metamask, I verify the signed message at the server side, only by then I set the jwt token to browser's cookies
 - Used [Invisible reCAPTCHA](https://developers.google.com/recaptcha/docs/invisible) to prevent bot's    
 - Used `node-cron` to check every hour if users are completed the whitelist requirements by checking quoted tweets from Twitter Api etc
 
