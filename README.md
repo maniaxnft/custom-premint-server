@@ -4,6 +4,9 @@ Custom Premint is an app where users connect their Metamask, Discord and Twitter
 There is already Premint existing but this app allows you to customize it, add special roles based on what logic you want.
 Client app that using this api is https://github.com/maniaxnft/custom-premint-client
 
+- I tried to follow the main principles of [12 Factor App](https://12factor.net/) by giving all private fields(client secrets, discord channel id's etc) by .env file, also there is nearly no logic related to specific environments
+
+
 ## Technologies
 - Used oauth 2.0 flow of [Twitter](https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens) and [Discord](https://discord.com/developers/docs/topics/oauth2) to get user id's and user name's 
 - Used Sign-in with Ethereum so people do not need to provide their email or username and keep their personal data
