@@ -22,7 +22,7 @@ const signJwt = (user) => {
 
 router.post("/nonce", rateLimiter, checkCaptcha, async (req, res) => {
   const nonce = generateNonce();
-  const walletAddress = req.body.walletAddress;
+  const walletAddress = req.body?.walletAddress;
 
   try {
     const user = await userModel.findOne({ walletAddress });
@@ -68,8 +68,8 @@ router.post("/validate_signature", async (req, res) => {
 });
 
 router.get("/isAuthenticated", rateLimiter, authenticateUser, (req, res) => {
-  if (req?.walletAddress) {
-    res.status(200).send({ walletAddress: req?.walletAddress });
+  if (req.walletAddress) {
+    res.status(200).send({ walletAddress: req.walletAddress });
   } else {
     res.status(401).send("nein");
   }
