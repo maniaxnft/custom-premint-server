@@ -4,9 +4,9 @@ Custom Premint is an app where users connect their Metamask, Discord and Twitter
 There is already Premint existing but this app allows you to customize it, add special roles based on what logic you want.
 
 ## Technologies
-- Used oauth 2.0 flow of Twitter and Discrord to get user id's and user name's 
-- Used Sign-in with Ethereum
-- When you sign a message with Metamask, I verify it in server side, only by then I set the jwt token to browser's cookies
+- Used oauth 2.0 flow of [Twitter](https://developer.twitter.com/en/docs/authentication/oauth-2-0/bearer-tokens) and [Discord](https://discord.com/developers/docs/topics/oauth2) to get user id's and user name's 
+- Used Sign-in with Ethereum so people do not need to provide their email or username and keep their personal data
+- When you sign a message with Metamask, I verify it at the server side, only by then I set the jwt token to browser's cookies
 - Used invisible Recapthca to prevent bot's    
 
 ## Step 1
@@ -30,4 +30,3 @@ yarn && node src/index.js
 
 ## Future Development
 - Add Typescript
-- Add more animation to make the site pretty
