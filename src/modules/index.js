@@ -1,9 +1,10 @@
 const Discord = require("discord.js");
+const cron = require("node-cron");
 
 const checkIfFollowingSocials = require("./social");
 const updateUserInfo = require("./userInfo");
-const checkForWhitelistEvents = require("./whitelist");
 const giveaway = require("./giveaway");
+// const checkForWhitelistEvents = require("./whitelist");
 // const checkIfEligibleForRoles = require("./role");
 
 const { wait } = require("../utils");
@@ -22,11 +23,14 @@ const initCrons = async () => {
     await bot.login(process.env.DISCORD_BOT_TOKEN);
     await wait(500);
 
-    checkIfFollowingSocials(bot);
-    updateUserInfo(bot);
-    checkForWhitelistEvents(bot);
-    giveaway(bot);
-    // checkIfEligibleForRoles(bot);
+    cron.schedule("*/60 * * * *", async () => {
+      await checkIfFollowingSocials(bot);
+      await updateUserInfo(bot);
+      await giveaway(bot);
+      // await checkForWhitelistEvents(bot);
+      // checkIfEligibleForRoles(bot);
+    });
+  
   } catch (e) {
     console.error("Error at initCrons", e);
     throw e;

@@ -1,5 +1,4 @@
 const axios = require("axios");
-const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
 const { wait } = require("../utils");
@@ -9,9 +8,7 @@ const {
 } = require("../api/oauth/services");
 
 const updateUserInfo = (bot) => {
-  cron.schedule("*/30 * * * *", () => {
-    main(bot);
-  });
+  main(bot);
 };
 
 const main = async (bot) => {

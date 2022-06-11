@@ -1,13 +1,10 @@
 const axios = require("axios");
-const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
 const checkIfFollowingSocials = (bot) => {
-  cron.schedule("*/30 * * * *", () => {
     main(bot);
-  });
 };
 
 const main = async (bot) => {

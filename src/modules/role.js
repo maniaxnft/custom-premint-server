@@ -1,5 +1,4 @@
 const axios = require("axios");
-const cron = require("node-cron");
 
 const userModel = require("../api/auth/models");
 const {
@@ -9,9 +8,7 @@ const {
 } = require("../utils");
 
 const checkIfEligibleForRoles = (bot) => {
-  cron.schedule("*/30 * * * *", () => {
     checkForAllUsers(bot);
-  });
 };
 
 const checkForAllUsers = async (bot) => {
