@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "upgrade": "yarn yarn-upgrade-all"
+    "up": "yarn upgrade-interactive"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -25,7 +25,8 @@
     "node-cron": "^3.0.0",
     "nodemon": "^2.0.16",
     "siwe": "^1.1.6",
-    "twitter-api-v2": "^1.12.0"
+    "twitter-api-v2": "^1.12.0",
+    "uuid": "^8.3.2"
   },
   "engines": {
     "node": "16.15.0",

@@ -52,7 +52,7 @@ const checkCaptcha = async (req, res, next) => {
 
 const rateLimiter = rateLimit({
   windowMs: 30 * 1000, // 30 seconds in milliseconds
-  max: 5,
+  max: 10,
   message:
     "You have reached maximum retries. Please try again after 30 seconds",
   statusCode: 429,
