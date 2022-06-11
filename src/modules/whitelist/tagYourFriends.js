@@ -8,6 +8,9 @@ const tagYourFriends = async ({ bot, user, nextToken }) => {
     const endTime = new Date(process.env.TWITTER_FRIENDS_EVENT_END_DATE);
 
     const quoteTweetId = process.env.TWITTER_QUOTE_TWEET_ID;
+    if(quoteTweetId === 'notyet') {
+      return;
+    }
 
     let query = `max_results=100&tweet.fields=created_at&user.fields=id&expansions=entities.mentions.username%2Cauthor_id&exclude=replies%2Cretweets`;
     if (nextToken) {
