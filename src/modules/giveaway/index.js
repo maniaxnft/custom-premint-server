@@ -56,7 +56,7 @@ const giveaway = async ({ bot, nextToken }) => {
       if(updated) {
         sendInfoMessageToUser({
           bot,
-          message: `<@${updated.discordId}> You attended our twitter giweavay!.`,
+          message: `<@${updated.discordId}> You attended our twitter giweavay!`,
         });
       }
     }
