@@ -2,7 +2,7 @@ const axios = require("axios");
 const cron = require("node-cron");
 
 const userModel = require("../../api/auth/models");
-const { sendErrorToLogChannel, wait } = require("../../utils");
+const { sendErrorToLogChannel, wait, sendInfoMessageToUser } = require("../../utils");
 
 const Index = (bot) => {
   cron.schedule("*/30 * * * *", () => {
@@ -27,7 +27,7 @@ const giveaway = async ({ bot, nextToken }) => {
     }
     // https://developer.twitter.com/en/docs/twitter-api/tweets/retweets/api-reference/get-tweets-id-retweeted_by
     const response = await axios.get(
-      `https://api.twitter.com/2/tweets/${process.env.GIVEAWAY_TWEET_ID}/retweeted_by${query}`,
+      `https://api.twitter.com/2/tweets/${process.env.GIVEAWAY_TWEET_ID}/retweeted_by?${query}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
@@ -44,15 +44,21 @@ const giveaway = async ({ bot, nextToken }) => {
     }
 
     for (let twitterUser of twitterUsers) {
-      await userModel.findOneAndUpdate(
+      const updated = await userModel.findOneAndUpdate(
         {
-          discordId: { $exists: true },
-          twitterId: twitterUser?.id,
+          twitterId: twitterUser.id,
           isFollowingFromTwitter: true,
+          discordId: { $exists: true },
           walletAddress: { $exists: true },
         },
         { giveaway: true }
       );
+      if(updated) {
+        sendInfoMessageToUser({
+          bot,
+          message: `<@${updated.discordId}> You attended our twitter giweavay!.`,
+        });
+      }
     }
 
     const newNextToken = response.data?.meta?.next_token;
@@ -60,7 +66,7 @@ const giveaway = async ({ bot, nextToken }) => {
       await giveaway({ bot, nextToken: newNextToken });
     }
   } catch (e) {
-    console.log("Error at checkIfMetntioned");
+    console.log("Error at checkIfMetntioned", e);
     sendErrorToLogChannel(bot, "Error at checkIfMetntioned", e);
   }
 };

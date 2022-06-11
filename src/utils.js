@@ -4,7 +4,7 @@ const sendErrorToLogChannel = async (bot, message, e) => {
       process.env.DISCORD_BOT_INFO_CHANNEL_ID
     );
     if (e?.response?.data && channel) {
-      channel.send(`${message}, error message: ${e.response.data}`);
+      channel.send(`${message}, error message: ${JSON.stringify(e.response.data)}`);
     } else if (e?.message && channel) {
       channel.send(`${message}, error message: ${e.message}`);
     } else if (!e?.message && channel) {
@@ -47,7 +47,6 @@ const addMemberXRole = async ({ bot, user }) => {
       guildMember.roles.add(memberxRole);
       sendInfoMessageToUser({
         bot,
-        guildMember,
         message: `<@${user.discordId}> You have been promoted with <@&${memberxRole.id}> Role !`,
       });
     }

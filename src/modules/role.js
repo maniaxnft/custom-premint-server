@@ -88,7 +88,6 @@ const checkIfManiac = ({ bot, result, guildMember, maniacRole }) => {
     guildMember.roles.remove(maniacRole);
     sendInfoMessageToUser({
       bot,
-      guildMember,
       message: `<@${guildMemberId}> Your <@&${maniacRole.id}> role has been withdrawn since we cannot find a Maniax NFT in your wallet.`,
     });
   }
@@ -96,7 +95,6 @@ const checkIfManiac = ({ bot, result, guildMember, maniacRole }) => {
     guildMember.roles.add(maniacRole);
     sendInfoMessageToUser({
       bot,
-      guildMember,
       message: `<@${guildMemberId}> You have been promoted with <@&${maniacRole.id}> Role !`,
     });
   }
@@ -111,7 +109,6 @@ const checkIfManiax = ({ bot, result, guildMember, maniaxRole }) => {
     guildMember.roles.remove(maniaxRole);
     sendInfoMessageToUser({
       bot,
-      guildMember,
       message: `<@${guildMemberId}> Your <@&${maniaxRole.id}> role has been withdrawn since you have less than 5 Maniax NFT`,
     });
   }
@@ -119,7 +116,6 @@ const checkIfManiax = ({ bot, result, guildMember, maniaxRole }) => {
     guildMember.roles.add(maniaxRole);
     sendInfoMessageToUser({
       bot,
-      guildMember,
       message: `<@${guildMemberId}> You have been promoted with <@&${maniaxRole.id}> Role!`,
     });
   }
@@ -158,7 +154,6 @@ const checkIfRareX = async ({ bot, result, guildMember, rarexRole }) => {
     guildMember.roles.add(rarexRole);
     sendInfoMessageToUser({
       bot,
-      guildMember,
       message: `<@${guildMemberId}> You have been promoted with <@&${rarexRole.id}> Role !`,
     });
   }
@@ -166,7 +161,6 @@ const checkIfRareX = async ({ bot, result, guildMember, rarexRole }) => {
     guildMember.roles.remove(rarexRole);
     sendInfoMessageToUser({
       bot,
-      guildMember,
       message: `<@${guildMemberId}> Your <@&${rarexRole.id}> role has been withdrawn since we cannot find a Rare NFT in your wallet.`,
     });
   }
