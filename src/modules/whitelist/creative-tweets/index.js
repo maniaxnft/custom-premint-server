@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { wait, sendErrorToLogChannel } = require("../../utils");
+const { wait, sendErrorToLogChannel } = require("../../../utils");
 const creativeTweetModel = require("./model");
 const Discord = require("discord.js");
 

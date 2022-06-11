@@ -3,6 +3,7 @@ const Discord = require("discord.js");
 const checkIfFollowingSocials = require("./social");
 const updateUserInfo = require("./userInfo");
 const checkForWhitelistEvents = require("./whitelist");
+const giveaway = require("./giveaway");
 // const checkIfEligibleForRoles = require("./role");
 
 const { wait } = require("../utils");
@@ -24,6 +25,7 @@ const initCrons = async () => {
     checkIfFollowingSocials(bot);
     updateUserInfo(bot);
     checkForWhitelistEvents(bot);
+    giveaway(bot);
     // checkIfEligibleForRoles(bot);
   } catch (e) {
     console.error("Error at initCrons", e);

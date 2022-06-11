@@ -2,7 +2,7 @@ const cron = require("node-cron");
 
 const tagYourFriends = require("./tagYourFriends");
 const checkIfMentioned = require("./checkIfMentioned");
-const mostCreativeTweets = require("./mostCreativeTweets");
+const mostCreativeTweets = require("./creative-tweets");
 
 const userModel = require("../../api/auth/models");
 const { addMemberXRole } = require("../../utils");

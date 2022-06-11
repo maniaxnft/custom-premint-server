@@ -31,6 +31,9 @@ const userSchema = mongoose.Schema({
   hasRare: {
     type: Boolean,
   },
+  giveaway: {
+    type: Boolean,
+  },
 });
 
 const userModel = mongoose.model("user", userSchema);
