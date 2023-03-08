@@ -4,7 +4,7 @@ const userModel = require("../api/auth/models");
 const { sendErrorToLogChannel, wait } = require("../utils");
 
 const checkIfFollowingSocials = (bot) => {
-    main(bot);
+  main(bot);
 };
 
 const main = async (bot) => {

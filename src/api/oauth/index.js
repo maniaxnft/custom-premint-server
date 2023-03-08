@@ -58,15 +58,15 @@ router.post(
             { new: true }
           );
           await checkIfDiscordMemberAndVerified(user);
-          res.send(userResponse.data?.username);
+          return res.send(userResponse.data?.username);
         } else {
-          res.status(500).send("Something went wrong");
+          return res.status(500).send("Something went wrong");
         }
       } catch (e) {
-        res.status(400).send("Something went wrong");
+        return res.status(400).send("Something went wrong");
       }
     } else {
-      res.status(401).send("Something went wrong");
+      return res.status(401).send("Something went wrong");
     }
   }
 );
@@ -95,13 +95,13 @@ router.post(
           oauthToken,
           oauthTokenSecret,
         });
-        res.send(response.oauth_token);
+        return res.send(response.oauth_token);
       } else {
-        res.status(500).send("Something went wrong");
+        return res.status(500).send("Something went wrong");
       }
     } catch (e) {
       console.error(e);
-      res.status(500).send("Something went wrong");
+      return res.status(500).send("Something went wrong");
     }
   }
 );
@@ -171,16 +171,16 @@ router.get("/twitter/check", authenticateUser, async (req, res) => {
       await twitterCallbackModel.deleteOne({
         walletAddress,
       });
-      res.status(200).send("success");
+      return res.status(200).send("success");
     } else if (!twitterCallback && user.twitterName && user.twitterId) {
-      res.status(200).send("success");
+      return res.status(200).send("success");
     } else if (twitterCallback?.error) {
-      res.status(400).send(twitterCallback?.error);
+      return res.status(400).send(twitterCallback?.error);
     } else {
-      res.status(400).send("Something went wrong");
+      return res.status(400).send("Something went wrong");
     }
   } catch (e) {
-    res.status(500).send("Something went wrong");
+    return res.status(500).send("Something went wrong");
   }
 });
 

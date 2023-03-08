@@ -3,7 +3,7 @@ const cron = require("node-cron");
 
 const checkIfFollowingSocials = require("./social");
 const updateUserInfo = require("./userInfo");
-const giveaway = require("./giveaway");
+// const giveaway = require("./giveaway");
 // const checkForWhitelistEvents = require("./whitelist");
 // const checkIfEligibleForRoles = require("./role");
 
@@ -26,11 +26,10 @@ const initCrons = async () => {
     cron.schedule("*/60 * * * *", async () => {
       await checkIfFollowingSocials(bot);
       await updateUserInfo(bot);
-      await giveaway(bot);
+      // await giveaway(bot);
       // await checkForWhitelistEvents(bot);
       // checkIfEligibleForRoles(bot);
     });
-  
   } catch (e) {
     console.error("Error at initCrons", e);
     throw e;

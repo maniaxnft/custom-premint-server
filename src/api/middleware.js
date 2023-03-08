@@ -30,7 +30,7 @@ const authenticateUser = async (req, res, next) => {
     next();
   } catch (e) {
     res.clearCookie("token");
-    res.status(401).send(`Unauthenticated`);
+    return res.status(401).send(`Unauthenticated`);
   }
 };
 
@@ -43,10 +43,10 @@ const checkCaptcha = async (req, res, next) => {
     if (res.data?.success) {
       next();
     } else {
-      res.status(401).send("Unauthenticated");
+      return res.status(401).send("Unauthenticated");
     }
   } catch (e) {
-    res.status(500).send("Something went wrong");
+    return res.status(500).send("Something went wrong");
   }
 };
 
