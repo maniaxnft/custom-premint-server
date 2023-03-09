@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon src/index.js",
-    "start": "node src/index.js",
+    "dev": "NODE_ENV=local nodemon src/index.js",
+    "start": "NODE_ENV=prod node src/index.js",
     "up": "yarn upgrade-interactive"
   },
   "dependencies": {

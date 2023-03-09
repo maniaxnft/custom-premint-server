@@ -1,4 +1,11 @@
-require("dotenv-safe").config();
+const path = require("path");
+console.log(
+  "Loading env vars from " +
+    path.resolve(__dirname, "..", `.env.${process.env.NODE_ENV}`)
+);
+require("dotenv-safe").config({
+  path: path.resolve(__dirname, "..", `.env.${process.env.NODE_ENV}`),
+});
 
 const express = require("express");
 const cookieParser = require("cookie-parser");

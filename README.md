@@ -16,7 +16,7 @@ Client app that using this api is https://github.com/maniaxnft/custom-premint-cl
 
 ## Step 1
 
-- Create `.env` file, copy and paste the variables from `.env.example`
+- Create `.env.local` and `.env.prod` file, copy and paste the variables from `.env.example`
 - Create Discord app and get `client_id` and `client_secret` and add them to the `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET` env vars
 - Create Twitter app and get bearer token, consumer token, consumer token secret, access token and access token secret and place them in env vars as `TWITTER_BEARER_TOKEN` `TWITTER_CONSUMER_KEY` `TWITTER_CONSUMER_SECRET` `TWITTER_ACCESS_TOKEN_KEY` `TWITTER_ACCESS_TOKEN_SECRET`
 
