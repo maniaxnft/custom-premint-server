@@ -78,12 +78,11 @@ router.post(
   checkCaptcha,
   async (req, res) => {
     const walletAddress = req.walletAddress;
-    const client = new TwitterApi({
-      appKey: process.env.TWITTER_CONSUMER_KEY,
-      appSecret: process.env.TWITTER_CONSUMER_SECRET,
-    });
-
     try {
+      const client = new TwitterApi({
+        appKey: process.env.TWITTER_CONSUMER_KEY,
+        appSecret: process.env.TWITTER_CONSUMER_SECRET,
+      });
       const response = await client.generateAuthLink(
         process.env.TWITTER_CALLBACK_URL
       );
@@ -110,13 +109,13 @@ router.get("/twitter/callback", authenticateUser, async (req, res) => {
   const oauth_token = req.query?.oauth_token;
   const oauth_verifier = req.query?.oauth_verifier;
   let error = "";
-
-  const twitterCallback = await twitterCallbackModel
-    .findOne({
-      oauthToken: oauth_token,
-    })
-    .lean();
+  let twitterCallback = "";
   try {
+    twitterCallback = await twitterCallbackModel
+      .findOne({
+        oauthToken: oauth_token,
+      })
+      .lean();
     const oauthTokenSecret = twitterCallback?.oauthTokenSecret;
     if (oauthTokenSecret && oauth_token && oauth_verifier) {
       const client = new TwitterApi({
